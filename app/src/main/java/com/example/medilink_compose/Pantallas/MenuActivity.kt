@@ -29,7 +29,7 @@ import com.example.medilink_compose.R
 fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioViewModel: UsuarioViewModel) {
 
     val scrollState = rememberScrollState()
-    val usuario by usuarioViewModel.usuarioLogueado.collectAsState()
+
 
     val navItems = listOf(
         NavItem("Inicio", Icons.Default.Home, "Menu"),
@@ -38,18 +38,7 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
     )
 
     Scaffold(
-        topBar = {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 15.dp, horizontal = 10.dp)
-            ) {
-                Column {
-                    Text("Usuario Activo:", fontWeight = FontWeight.Bold)
-                    Text("${usuario}")
-                }
-            }
-        },
+
         bottomBar = {
             BottomAppBar(
                 containerColor = Color(0xFF00A9B0),
@@ -93,8 +82,7 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
             Text(
                 "Menu Principal",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xff00a9b0)
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -138,6 +126,14 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
                     ) {
                         Text("Registrar cita")
+                    }
+
+                    Button(
+                        onClick = { /* TODO */ },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
+                    ) {
+                        Text("Citas pendientes")
                     }
                 }
             }
