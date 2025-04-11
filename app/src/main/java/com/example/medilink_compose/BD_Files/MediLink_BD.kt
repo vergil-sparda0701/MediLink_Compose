@@ -50,6 +50,12 @@ class SQLiteHelper(
         db?.execSQL("DROP TABLE IF EXISTS pacientes")
         onCreate(db)
     }
+
+    override fun onConfigure(db: SQLiteDatabase?) {
+        super.onConfigure(db)
+        db?.setForeignKeyConstraintsEnabled(true)
+    }
+
 }
 
 
