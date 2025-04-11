@@ -1,5 +1,6 @@
 package com.example.medilink_compose
 
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +11,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
+
+lateinit var con: SQLiteHelper
+lateinit var baseDatos: SQLiteDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +30,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+
+        con = SQLiteHelper(context = this, "MediLink.db", null, 1)
+        baseDatos = con.writableDatabase
     }
 }
 

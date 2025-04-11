@@ -82,9 +82,6 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
 
         )
 
-        //leadingIcon = { Icon(imageVector =  Icons.Filled.Person, contentDescription = "Nombre") },
-
-
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -128,6 +125,10 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
             navController.navigate("paciente")
 
         })
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        Text("© 2025 MediLink", fontSize = 12.sp, color = Color.LightGray)
 
     }
 
