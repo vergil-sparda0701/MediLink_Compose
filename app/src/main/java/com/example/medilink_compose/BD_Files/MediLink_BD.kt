@@ -20,7 +20,7 @@ class SQLiteHelper(
                 -- Datos personales
                 nombre TEXT,
                 apellido TEXT,
-                fechaNacimiento TEXT,
+                fechaNacimiento DATE,
                 sexo TEXT,
                 cedula TEXT,
                 estadoCivil TEXT,

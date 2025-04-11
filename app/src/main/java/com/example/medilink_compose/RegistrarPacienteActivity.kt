@@ -2,14 +2,11 @@ package com.example.medilink_compose
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -44,11 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import com.example.medilink_compose.BD_Files.SQLiteHelper
-
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -98,6 +89,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
 
     //endregion
+
     val context = LocalContext.current
 
     // SCaffold con BottomAppBar
@@ -107,6 +99,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                 containerColor = Color(0xFF00A9B0),
                 contentColor = Color.White
             ) {
+
                 Row (horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier =  Modifier.fillMaxWidth()) {
@@ -178,7 +171,10 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                             Toast.makeText(context, "Debe ingresar una cédula para modificar", Toast.LENGTH_LONG).show()
                         }})
                     Spacer(modifier = Modifier.width(2.dp))
-                    ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {showBuscarPopup.value = true})
+                    ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {
+
+                        showBuscarPopup.value = true
+                    })
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.guardar, text = "Guardar", onClick = {
 
@@ -219,6 +215,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                         registro.put("nombre", nombre.value)
                         registro.put("apellido", apellido.value)
                         registro.put("fechaNacimiento", fecha.value)
+                        registro.put("estadoCivil", estadoCivilSelec.value)
                         registro.put("sexo", sexoSelec.value)
                         registro.put("cedula", cedula.value)
 
@@ -243,7 +240,46 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
                     })
                     Spacer(modifier = Modifier.width(2.dp))
-                    ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {/*TODO*/})
+                    ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {
+
+                        if (cedula.value.isNotEmpty()) {
+                            val filasAfectadas = baseDatos.delete(
+                                "pacientes",
+                                "cedula = ?",
+                                arrayOf(cedula.value)
+                            )
+
+                            if (filasAfectadas > 0) {
+                                Toast.makeText(context, "Paciente eliminado exitosamente", Toast.LENGTH_LONG).show()
+
+                                // Limpiar los campos después de eliminar
+                                nombre.value = ""
+                                apellido.value = ""
+                                fecha.value = ""
+                                sexoSelec.value = ""
+                                estadoCivilSelec.value = ""
+                                cedula.value = ""
+
+                                celular.value = ""
+                                telefono.value = ""
+                                correo.value = ""
+                                direccion.value = ""
+
+                                nombreContacto.value = ""
+                                cedulaContacto.value = ""
+                                celularContacto.value = ""
+
+                                condicion.value = ""
+                                sangreSelec.value = ""
+
+                            } else {
+                                Toast.makeText(context, "No se encontró un paciente con esa cédula", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Debe ingresar una cédula para eliminar", Toast.LENGTH_LONG).show()
+                        }
+
+                    })
 
                 }
             }
@@ -281,7 +317,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                 Spacer(modifier = Modifier.height(8.dp))
                 outLinedText(apellido, "Apellido", Modifier.fillMaxWidth(), false, true)
                 Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(fecha, "Fecha", Modifier.fillMaxWidth(), false, true)
+                FechaConDatePicker(fecha, "Fecha de nacimiento")
                 Spacer(modifier = Modifier.height(8.dp))
                 ComboBox(opciones = sexo, seleccion = sexoSelec, "Sexo", true)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -431,5 +467,3 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
     }
 
 }
-
-

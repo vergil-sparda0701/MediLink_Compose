@@ -1,8 +1,6 @@
 package com.example.medilink_compose
 
 import android.app.DatePickerDialog
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenuItem
@@ -25,11 +22,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,8 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -49,8 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @Composable
 public fun outLinedText(
@@ -201,47 +193,40 @@ fun ImageButton(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DatePickerTextField(
+fun FechaConDatePicker(
+    fecha: MutableState<String>,
     label: String = "Fecha"
 ) {
-    val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val context = LocalContext.current
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    var showDatePicker by remember { mutableStateOf(false) }
+    val calendar = Calendar.getInstance()
 
-    val datePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-            },
-            LocalDate.now().year,
-            LocalDate.now().monthValue - 1,
-            LocalDate.now().dayOfMonth
-        )
-    }
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    // Mostrar el diálogo en una side-effect, fuera del render
-    LaunchedEffect(showDatePicker) {
-        if (showDatePicker) {
-            datePickerDialog.show()
-            showDatePicker = false
-        }
-    }
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val fechaSeleccionada = "${selectedDay.toString().padStart(2, '0')}/" +
+                    "${(selectedMonth + 1).toString().padStart(2, '0')}/$selectedYear"
+            fecha.value = fechaSeleccionada
+        },
+        year, month, day
+    )
 
     OutlinedTextField(
-        value = selectedDate?.format(dateFormat) ?: "",
+        value = fecha.value,
         onValueChange = {},
-        label = { Text(label) },
-        readOnly = true,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { showDatePicker = true },
-        trailingIcon = {
-            Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
-        }
+            .clickable {
+                datePickerDialog.show()
+            },
+        label = { Text(label) },
+        enabled = false, // No editable directamente
+        readOnly = true
     )
 }
+
 
