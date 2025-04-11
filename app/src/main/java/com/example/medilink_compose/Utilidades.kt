@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lint.kotlin.metadata.Visibility
 import java.util.Calendar
 
 @Composable
@@ -75,6 +77,45 @@ public fun outLinedText(
         )//fin del evento keyDown
     )// fin del outfieldtext
 
+}
+
+@Composable
+fun OutlinedPasswordField(
+    variableMutable: MutableState<String>,
+    etiqueta: String,
+    modifier: Modifier,
+    keyDown: Boolean
+) {
+    val focusManager = LocalFocusManager.current
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = variableMutable.value,
+        onValueChange = { variableMutable.value = it },
+        label = { Text(etiqueta) },
+        modifier = modifier,
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = if (keyDown) ImeAction.Next else ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                if (keyDown) {
+                    focusManager.moveFocus(FocusDirection.Down)
+                } else {
+                    focusManager.clearFocus()
+                }
+            }
+        ),
+        trailingIcon = {
+            val image = if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
+            val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+
+            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                Icon(painter = painterResource(image), contentDescription = description)
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,6 +188,7 @@ fun SeccionDesplegable(
             .fillMaxWidth()
             .clickable { expandido.value = !expandido.value }
     ) {
+
         // Cabecera
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

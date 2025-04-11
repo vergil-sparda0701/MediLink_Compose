@@ -1,5 +1,8 @@
 package com.example.medilink_compose.Pantallas
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,18 +36,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavHostController
+import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.R
+import com.example.medilink_compose.baseDatos
+import com.example.medilink_compose.con
 
 
 @Composable
 fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostController){
 
-    var email by remember { mutableStateOf("") }
+    var usuario by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
-
+    val context = LocalContext.current
+    var passwordVisible by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
 
@@ -70,8 +81,8 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
 
         //campos para ingresar datos
         OutlinedTextField(
-            value = email,
-            onValueChange = {email = it},
+            value = usuario,
+            onValueChange = {usuario = it},
             label = {Text("Usuario")},
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
@@ -87,13 +98,21 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
             value = pass,
             onValueChange = {pass = it},
             label = {Text("Contraseña")},
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
                 }
             ),
+            trailingIcon = {
+                val image = if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
+                val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(painter = painterResource(image), contentDescription = description)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
 
         )
@@ -101,7 +120,7 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
         Spacer(modifier = Modifier.height(16.dp))
 
         Row{
-            Button(onClick = {},
+            Button(onClick = {login(context, usuario, pass, navController)},
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
@@ -127,3 +146,46 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
     }
 
 }
+
+
+@SuppressLint("Range")
+fun login(context : Context, usuario: String, pass: String, navController: NavHostController) {
+
+
+    val admin = con
+    val baseDatos = admin.readableDatabase
+
+    val tabla = "usuarios"
+    val columnas = arrayOf("usuario", "clave")
+    val seleccion = "usuario = ? AND clave = ?"
+    val seleccionArgs = arrayOf(usuario, pass)
+
+    val cursor = baseDatos.query(
+        tabla,
+        columnas,
+        seleccion,
+        seleccionArgs,
+        null,
+        null,
+        null
+    )
+
+    var valorEncontrado = false
+
+    if (cursor.moveToFirst()) {
+        val valorColumna = cursor.getString(cursor.getColumnIndex("usuario"))
+        val valorColumna2 = cursor.getString(cursor.getColumnIndex("clave"))
+        if (valorColumna == usuario && valorColumna2 == pass) {
+            valorEncontrado = true
+        }
+    }
+
+    cursor.close()
+
+    if (valorEncontrado) {
+        navController.navigate("Menu")
+    } else {
+        Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_LONG).show()
+    }
+}
+

@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medilink_compose.Pantallas.LoginActivity
+import com.example.medilink_compose.Pantallas.MenuActivity
 import com.example.medilink_compose.Pantallas.RegistrarPacienteActivity
 import com.example.medilink_compose.Pantallas.UsuarioActivity
 
@@ -20,6 +21,10 @@ fun AppNavigation (modifier: Modifier = Modifier){
     NavHost(navController = navController, startDestination = "login") {
         composable("login"){
             LoginActivity(modifier, navController)
+        }
+
+        composable("Menu"){
+            MenuActivity(modifier, navController)
         }
 
         composable("usuario"){

@@ -9,7 +9,7 @@ class SQLiteHelper(
     s: String,
     nothing: Nothing?,
     i: Int
-) : SQLiteOpenHelper(context, "MediLink.db", null, 1) {
+) : SQLiteOpenHelper(context, "MediLink.db", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
@@ -61,7 +61,10 @@ class SQLiteHelper(
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS pacientes")
+        val tablas = listOf("pacientes", "usuarios") // Agregá aquí todas las tablas nuevas que vayas creando
+        tablas.forEach { tabla ->
+            db?.execSQL("DROP TABLE IF EXISTS $tabla")
+        }
         onCreate(db)
     }
 
