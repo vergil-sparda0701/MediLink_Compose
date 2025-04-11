@@ -65,6 +65,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
     val cedula = remember { mutableStateOf("") }
     val estadoCivil = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Union libre")
     val estadoCivilSelec = remember { mutableStateOf("") }
+    val estado = listOf("Activo", "Inactivo")
+    val estadoSelec = remember { mutableStateOf("") }
 
     // Datos de contacto
     val celular = remember { mutableStateOf("") }
@@ -102,11 +104,10 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
                 Row (horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier =  Modifier.fillMaxWidth()) {
+                    modifier =  Modifier.fillMaxWidth()
+                ) {
 
                     ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick = {
-
-
                         nombre.value = ""
                         apellido.value = ""
                         fecha.value =  ""
@@ -187,7 +188,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                             cedula.value.isBlank() ||
                             celular.value.isBlank() ||
                             correo.value.isBlank() ||
-                            direccion.value.isBlank()
+                            direccion.value.isBlank() ||
+                            estadoSelec.value.isBlank()
                         ) {
                             Toast.makeText(context, "Por favor, complete todos los campos obligatorios", Toast.LENGTH_LONG).show()
                             return@ImageButton
@@ -218,6 +220,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                         registro.put("estadoCivil", estadoCivilSelec.value)
                         registro.put("sexo", sexoSelec.value)
                         registro.put("cedula", cedula.value)
+                        registro.put("estado", estadoSelec.value)
 
                         // Datos de contacto
                         registro.put("celular", celular.value)
@@ -324,6 +327,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                 outLinedText(cedula, "Cédula", Modifier.fillMaxWidth(), false, true)
                 Spacer(modifier = Modifier.height(8.dp))
                 ComboBox(opciones = estadoCivil, seleccion = estadoCivilSelec, "Estado civil", false)
+                Spacer(modifier = Modifier.height(8.dp))
+                ComboBox(opciones = estado, seleccion = estadoSelec, "Estado", false)
             }
 
             Spacer(modifier = Modifier.height(16.dp))

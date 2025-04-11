@@ -24,6 +24,7 @@ class SQLiteHelper(
                 sexo TEXT,
                 cedula TEXT,
                 estadoCivil TEXT,
+                estado TEXT,
                 
                 -- Datos de contacto
                 celular TEXT,
