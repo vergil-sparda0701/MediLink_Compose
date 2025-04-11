@@ -1,4 +1,4 @@
-package com.example.medilink_compose
+package com.example.medilink_compose.Pantallas
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +33,8 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import com.example.medilink_compose.R
 
 
 @Composable
@@ -114,22 +113,17 @@ fun LoginActivity(modifier: Modifier = Modifier, navController: NavHostControlle
 
         Spacer(modifier = Modifier.height(32.dp))
 
-
         Text("¿Olvidaste tu contraseña?", modifier = Modifier.clickable {  })
 
         Spacer(modifier = Modifier.height(32.dp))
 
-
         Text("Registrate", modifier = Modifier.clickable {
-
-            navController.navigate("paciente")
-
+            navController.navigate("usuario")
         })
 
         Spacer(modifier = Modifier.height(64.dp))
 
         Text("© 2025 MediLink", fontSize = 12.sp, color = Color.LightGray)
-
     }
 
 }

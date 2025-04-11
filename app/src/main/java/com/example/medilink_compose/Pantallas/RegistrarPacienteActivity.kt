@@ -1,4 +1,4 @@
-package com.example.medilink_compose
+package com.example.medilink_compose.Pantallas
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -21,10 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import com.example.medilink_compose.ComboBox
+import com.example.medilink_compose.FechaConDatePicker
+import com.example.medilink_compose.ImageButton
+import com.example.medilink_compose.R
+import com.example.medilink_compose.SeccionDesplegable
+import com.example.medilink_compose.baseDatos
+import com.example.medilink_compose.outLinedText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -96,6 +107,19 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
     // SCaffold con BottomAppBar
     Scaffold(
+        modifier = Modifier.padding(vertical = 20.dp),
+        topBar = {
+
+                Row (horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically){
+                    IconButton(onClick = {navController.popBackStack()}) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Navegar hacia atras"
+                        )
+                    }
+                }
+        },
         bottomBar = {
             BottomAppBar(
                 containerColor = Color(0xFF00A9B0),

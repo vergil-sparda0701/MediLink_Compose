@@ -44,6 +44,19 @@ class SQLiteHelper(
             """.trimIndent()
         )
 
+        db?.execSQL(
+            """
+                Create table usuarios (
+                id_Usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+                
+                -- Datos personales
+                usuario TEXT,
+                clave TEXT,
+                rol Text
+                )
+             """.trimIndent()
+        )
+
 
     }
 
