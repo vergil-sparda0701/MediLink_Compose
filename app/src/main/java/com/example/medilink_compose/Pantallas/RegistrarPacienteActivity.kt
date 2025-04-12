@@ -73,6 +73,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
     val scrollState = rememberScrollState()
 
     // Datos personales
+    val id = remember {mutableStateOf("")}
     val nombre = remember { mutableStateOf("") }
     val apellido = remember { mutableStateOf("") }
     val fecha = remember { mutableStateOf("") }
@@ -137,6 +138,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                 ) {
 
                     ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick = {
+                        id.value = ""
                         nombre.value = ""
                         apellido.value = ""
                         fecha.value =  ""
@@ -166,6 +168,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                         registro.put("apellido", apellido.value)
                         registro.put("fechaNacimiento", fecha.value)
                         registro.put("sexo", sexoSelec.value)
+                        registro.put("cedula", cedula.value)
+                        registro.put("estado", estadoSelec.value)
                         registro.put("estadoCivil", estadoCivilSelec.value)
 
                         // Datos de contacto
@@ -188,17 +192,17 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                             val cantidad = baseDatos.update(
                                 "pacientes",
                                 registro,
-                                "cedula = ?",
-                                arrayOf(cedula.value)
+                                "id = ?",
+                                arrayOf(id.value)
                             )
 
                             if (cantidad > 0) {
                                 Toast.makeText(context, "Se modificó exitosamente", Toast.LENGTH_LONG).show()
                             } else {
-                                Toast.makeText(context, "No se encontró un paciente con esa cédula", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "No se encontró un paciente con ese id", Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Debe ingresar una cédula para modificar", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Debe tener un id registrado para modificar", Toast.LENGTH_LONG).show()
                         }})
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {
@@ -226,8 +230,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
                         // Verificar si ya existe un paciente con esa cédula
                         val cursor = baseDatos.rawQuery(
-                            "SELECT * FROM pacientes WHERE cedula = ?",
-                            arrayOf(cedula.value)
+                            "SELECT * FROM pacientes WHERE cedula = ? OR id = ?",
+                            arrayOf(cedula.value, id.value)
                         )
 
                         if (cursor.moveToFirst()) {
@@ -274,17 +278,18 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {
 
-                        if (cedula.value.isNotEmpty()) {
+                        if (id.value.isNotEmpty()) {
                             val filasAfectadas = baseDatos.delete(
                                 "pacientes",
-                                "cedula = ?",
-                                arrayOf(cedula.value)
+                                "id = ?",
+                                arrayOf(id.value)
                             )
 
                             if (filasAfectadas > 0) {
                                 Toast.makeText(context, "Paciente eliminado exitosamente", Toast.LENGTH_LONG).show()
 
                                 // Limpiar los campos después de eliminar
+                                id.value = ""
                                 nombre.value = ""
                                 apellido.value = ""
                                 fecha.value = ""
@@ -305,10 +310,10 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                                 sangreSelec.value = ""
 
                             } else {
-                                Toast.makeText(context, "No se encontró un paciente con esa cédula", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "No se encontró un paciente con ese id", Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Debe ingresar una cédula para eliminar", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Debe tener un id registrado para eliminar", Toast.LENGTH_LONG).show()
                         }
 
                     })
@@ -345,6 +350,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
             Spacer(modifier = Modifier.height(16.dp))
 
             SeccionDesplegable("Datos personales", expandido) {
+                outLinedText(id, "Codigo", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
                 outLinedText(nombre, "Nombre", Modifier.fillMaxWidth(), false, keyDown = true)
                 Spacer(modifier = Modifier.height(8.dp))
                 outLinedText(apellido, "Apellido", Modifier.fillMaxWidth(), false, true)
@@ -452,12 +459,14 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                                     .padding(vertical = 4.dp)
                                     .clickable {
                                         // Rellenar campos
+                                        id.value = paciente["id"] ?: ""
                                         nombre.value = paciente["nombre"] ?: ""
                                         apellido.value = paciente["apellido"] ?: ""
                                         fecha.value = paciente["fechaNacimiento"] ?: ""
                                         sexoSelec.value = paciente["sexo"] ?: ""
                                         estadoCivilSelec.value = paciente["estadoCivil"] ?: ""
                                         cedula.value = paciente["cedula"] ?: ""
+                                        estadoSelec.value = paciente["estado"] ?:""
 
                                         celular.value = paciente["celular"] ?: ""
                                         telefono.value = paciente["telefono"] ?: ""

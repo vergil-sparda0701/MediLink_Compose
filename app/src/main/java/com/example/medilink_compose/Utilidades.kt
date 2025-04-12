@@ -54,7 +54,9 @@ public fun outLinedText(
     etiqueta: String,
     modifier: Modifier,
     pass: Boolean,
-    keyDown : Boolean) {
+    keyDown : Boolean,
+    editable : Boolean = true,
+    activo : Boolean = false) {
 
     val focusManager = LocalFocusManager.current
 
@@ -74,7 +76,10 @@ public fun outLinedText(
                     focusManager.clearFocus()
                 }
             }
-        )//fin del evento keyDown
+        ),
+        readOnly = !editable,
+        enabled = !activo
+
     )// fin del outfieldtext
 
 }

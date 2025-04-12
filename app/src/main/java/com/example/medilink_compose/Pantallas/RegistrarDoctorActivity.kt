@@ -69,6 +69,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
 
 
     //Datos personales
+    val id = remember { mutableStateOf("") }
     val nombre = remember { mutableStateOf("") }
     val apellido = remember { mutableStateOf("") }
     val fecha = remember { mutableStateOf("") }
@@ -131,6 +132,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                 ) {
                     ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick ={
 
+                        id.value = ""
                         nombre.value = ""
                         apellido.value = ""
                         fecha.value =  ""
@@ -183,21 +185,21 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                         registro.put("horaSalida_doc", horaInicio.value)
 
                         // Validar cédula antes de modificar
-                        if (cedula.value.isNotEmpty()) {
+                        if (id.value.isNotEmpty()) {
                             val cantidad = baseDatos.update(
                                 "doctores",
                                 registro,
-                                "cedula_doc = ?",
-                                arrayOf(cedula.value)
+                                "id_doctor = ?",
+                                arrayOf(id.value)
                             )
 
                             if (cantidad > 0) {
                                 Toast.makeText(context, "Se modificó exitosamente", Toast.LENGTH_LONG).show()
                             } else {
-                                Toast.makeText(context, "No se encontró un paciente con esa cédula", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "No se encontró un doctor con ese id", Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Debe ingresar una cédula para modificar", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "el registro debe tener un id para modificar", Toast.LENGTH_LONG).show()
                         }
 
                     })
@@ -233,8 +235,8 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
 
                         // Verificar si ya existe un paciente con esa cédula
                         val cursor = baseDatos.rawQuery(
-                            "SELECT * FROM doctores WHERE cedula_doc = ?",
-                            arrayOf(cedula.value)
+                            "SELECT * FROM doctores WHERE cedula_doc = ? OR id_doctor = ?",
+                            arrayOf(cedula.value, id.value)
                         )
 
                         if (cursor.moveToFirst()) {
@@ -290,17 +292,18 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick ={
 
-                        if (cedula.value.isNotEmpty()) {
+                        if (id.value.isNotEmpty()) {
                             val filasAfectadas = baseDatos.delete(
                                 "doctores",
-                                "cedula_doc = ?",
-                                arrayOf(cedula.value)
+                                "id_doctor = ?",
+                                arrayOf(id.value)
                             )
 
                             if (filasAfectadas > 0) {
                                 Toast.makeText(context, "Doctor eliminado exitosamente", Toast.LENGTH_LONG).show()
 
                                 // Limpiar los campos después de eliminar
+                                id.value = ""
                                 nombre.value = ""
                                 apellido.value = ""
                                 fecha.value = ""
@@ -322,10 +325,10 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                 horaFin.value = ""
 
                             } else {
-                                Toast.makeText(context, "No se encontró un doctor con esa cédula", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "No se encontró un doctor con ese id", Toast.LENGTH_LONG).show()
                             }
                         } else {
-                            Toast.makeText(context, "Debe ingresar una cédula para eliminar", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Debe tener un id registrado para eliminar", Toast.LENGTH_LONG).show()
                         }
 
                     })
@@ -362,6 +365,8 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
             Spacer(modifier = Modifier.height(16.dp))
 
             SeccionDesplegable("Datos Personales", expandido) {
+                outLinedText(id, "Codigo", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
                 outLinedText(nombre, "Nombre", Modifier.fillMaxWidth(), false, keyDown = true)
                 Spacer(modifier = Modifier.height(8.dp))
                 outLinedText(apellido, "Apellido", Modifier.fillMaxWidth(), false, keyDown = true)
@@ -474,6 +479,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                     .padding(vertical = 4.dp)
                                     .clickable {
                                         // Rellenar campos
+                                        id.value = doctor["id_doctor"] ?: ""
                                         nombre.value = doctor["nombre_doc"] ?: ""
                                         apellido.value = doctor["apellido_doc"] ?: ""
                                         fecha.value = doctor["fechaNacimiento_doc"] ?: ""

@@ -21,7 +21,7 @@ import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 
 
 
-val databaseVersion : Int = 3
+val databaseVersion : Int = 4
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)

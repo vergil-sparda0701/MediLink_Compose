@@ -9,7 +9,7 @@ class SQLiteHelper(
     s: String,
     nothing: Nothing?,
     i: Int
-) : SQLiteOpenHelper(context, "MediLink.db", null, 3) {
+) : SQLiteOpenHelper(context, "MediLink.db", null, 4) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
@@ -90,11 +90,34 @@ class SQLiteHelper(
             """.trimIndent()
         )
 
+        db?.execSQL(""" 
+            CREATE TABLE citas (
+                id_cita INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha_cita DATE NOT NULL,
+                hora_cita TIME,
+                estado_cita TEXT,
+                
+                --Datos doctor
+                id_doctor INTEGER NOT NULL,
+                nombre_doc TEXT,
+                apellido_doc TEXT,
+                
+                --Datos paciente
+                id_paciente INTEGER NOT NULL,
+                nombre_paciente TEXT,
+                apellido_paciente TEXT,
+                
+                FOREIGN KEY(id_doctor) REFERENCES doctores(id_doctor) ON DELETE CASCADE,
+                FOREIGN KEY(id_paciente) REFERENCES pacientes(id) ON DELETE CASCADE
+            )
+
+        """.trimIndent())
+
 
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val tablas = listOf("pacientes", "usuarios", "doctores") // Agregá aquí todas las tablas nuevas que vayas creando
+        val tablas = listOf("pacientes", "usuarios", "doctores", "citas") // Agregá aquí todas las tablas nuevas que vayas creando
         tablas.forEach { tabla ->
             db?.execSQL("DROP TABLE IF EXISTS $tabla")
         }
