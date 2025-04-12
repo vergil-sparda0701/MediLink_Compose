@@ -6,4 +6,7 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun HistorialActivity(modifier: Modifier, navController: NavHostController) {
+
+
+
 }

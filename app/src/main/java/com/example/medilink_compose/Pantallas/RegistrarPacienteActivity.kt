@@ -44,13 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.ComboBox
 import com.example.medilink_compose.FechaConDatePicker
 import com.example.medilink_compose.ImageButton
 import com.example.medilink_compose.R
 import com.example.medilink_compose.SeccionDesplegable
-import com.example.medilink_compose.baseDatos
+import com.example.medilink_compose.databaseVersion
 import com.example.medilink_compose.outLinedText
+import com.example.medilink_compose.databaseVersion
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,6 +61,9 @@ import com.example.medilink_compose.outLinedText
 fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavHostController) {
 
     //region Declaracion de variables
+    val context = LocalContext.current
+    val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
+    val baseDatos = dbHelper.writableDatabase
 
     // Estado de secciones
     var expandido = remember { mutableStateOf(false) }
@@ -103,7 +108,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
 
     //endregion
 
-    val context = LocalContext.current
+
 
     // SCaffold con BottomAppBar
     Scaffold(

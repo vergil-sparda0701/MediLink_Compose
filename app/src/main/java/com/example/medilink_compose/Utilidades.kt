@@ -276,6 +276,43 @@ fun FechaConDatePicker(
 @Composable
 fun HoraConTimePicker(
     hora: MutableState<String>,
+    label: String = "Hora"
+){
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    val horaActual = calendar.get(Calendar.HOUR_OF_DAY)
+    val minutoActual = calendar.get(Calendar.MINUTE)
+
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, selectedHour, selectedMinute ->
+            val horaSeleccionada = String.format("%02d:%02d", selectedHour, selectedMinute)
+
+            hora.value = horaSeleccionada
+        },
+        horaActual,
+        minutoActual,
+        true
+    )
+
+    OutlinedTextField(
+        value = hora.value,
+        onValueChange = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                timePickerDialog.show()
+            },
+        label = { Text(label) },
+        enabled = false, // Para que no se edite a mano
+        readOnly = true)
+
+}
+
+@Composable
+fun HoraConTimePickerCondicion(
+    hora: MutableState<String>,
     horasOcupadas: List<String>,
     label: String = "Hora"
 ) {
@@ -290,15 +327,15 @@ fun HoraConTimePicker(
         { _, selectedHour, selectedMinute ->
             val horaSeleccionada = String.format("%02d:%02d", selectedHour, selectedMinute)
 
-            if (horaSeleccionada in horasOcupadas) {
-                Toast.makeText(context, "Esa hora ya está ocupada", Toast.LENGTH_LONG).show()
-            } else {
-                hora.value = horaSeleccionada
-            }
+                if (horaSeleccionada in horasOcupadas) {
+                    Toast.makeText(context, "Esa hora ya está ocupada", Toast.LENGTH_LONG).show()
+                } else {
+                    hora.value = horaSeleccionada
+                }
         },
         horaActual,
         minutoActual,
-        false
+        true
     )
 
     OutlinedTextField(

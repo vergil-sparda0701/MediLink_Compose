@@ -48,7 +48,7 @@ import com.example.medilink_compose.ComboBox
 import com.example.medilink_compose.ImageButton
 import com.example.medilink_compose.OutlinedPasswordField
 import com.example.medilink_compose.R
-import com.example.medilink_compose.con
+import com.example.medilink_compose.databaseVersion
 import com.example.medilink_compose.outLinedText
 
 @Composable
@@ -62,8 +62,8 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
     val rolSelec = remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    val admin = con
-    val baseDatos = admin.writableDatabase
+    val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
+    val baseDatos = dbHelper.writableDatabase
 
     //metodos popup
     val showBuscarPopup = remember { mutableStateOf(false) }
@@ -260,7 +260,7 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Button(onClick = {
-                    val db = com.example.medilink_compose.baseDatos
+                    val db = baseDatos
                     val query = """
                     SELECT * FROM usuarios
                     WHERE usuario LIKE ? OR rol LIKE ?

@@ -41,9 +41,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavHostController
+import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.BD_Files.UsuarioViewModel
 import com.example.medilink_compose.R
-import com.example.medilink_compose.con
+import com.example.medilink_compose.databaseVersion
 
 
 @Composable
@@ -159,8 +160,8 @@ fun login(
     navController: NavHostController,
     usuarioViewModel: UsuarioViewModel
 ) {
-    val admin = con
-    val baseDatos = admin.readableDatabase
+    val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
+    val baseDatos = dbHelper.writableDatabase
 
     val tabla = "usuarios"
     val columnas = arrayOf("usuario", "clave")

@@ -18,8 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 
-lateinit var con: SQLiteHelper
-lateinit var baseDatos: SQLiteDatabase
+
+
+
+val databaseVersion : Int = 3
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -33,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        con = SQLiteHelper(context = this, "MediLink.db", null, 2)
-        baseDatos = con.writableDatabase
+
+
     }
 }

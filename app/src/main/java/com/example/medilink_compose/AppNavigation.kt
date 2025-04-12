@@ -12,6 +12,7 @@ import com.example.medilink_compose.BD_Files.UsuarioViewModel
 import com.example.medilink_compose.Pantallas.HistorialActivity
 import com.example.medilink_compose.Pantallas.LoginActivity
 import com.example.medilink_compose.Pantallas.MenuActivity
+import com.example.medilink_compose.Pantallas.RegistrarDoctorActivity
 import com.example.medilink_compose.Pantallas.RegistrarPacienteActivity
 import com.example.medilink_compose.Pantallas.UsuarioActivity
 
@@ -41,6 +42,10 @@ fun AppNavigation (modifier: Modifier = Modifier){
 
         composable("historial"){
             HistorialActivity(modifier, navController)
+        }
+
+        composable("doctor"){
+            RegistrarDoctorActivity(modifier, navController)
         }
     }
 
