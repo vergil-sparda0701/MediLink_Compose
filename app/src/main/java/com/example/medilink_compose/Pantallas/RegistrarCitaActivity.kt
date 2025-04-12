@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -108,10 +109,11 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
     // SCaffold con BottomAppBar
     Scaffold(
 
-        modifier = Modifier.padding(vertical = 20.dp),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
 
-            Row (horizontalArrangement = Arrangement.Start,
+            Row (Modifier.statusBarsPadding(),
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically){
                 IconButton(onClick = {navController.popBackStack()}) {
                     Icon(
@@ -580,10 +582,10 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
 
             ) {
-                Text("Buscar doctor", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Buscar cita", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda3, "Buscar por cédula o nombre", Modifier.fillMaxWidth(), false, true)
+                outLinedText(textoBusqueda3, "Buscar por hora o nombre del doctor", Modifier.fillMaxWidth(), false, true)
 
                 Spacer(modifier = Modifier.height(4.dp))
 

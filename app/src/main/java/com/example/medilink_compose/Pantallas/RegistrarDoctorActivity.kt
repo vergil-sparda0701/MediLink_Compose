@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -106,10 +107,11 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
 
     // SCaffold con BottomAppBar
     Scaffold(
-        modifier = Modifier.padding(vertical = 20.dp),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
 
-            Row (horizontalArrangement = Arrangement.Start,
+            Row (Modifier.statusBarsPadding(),
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically){
                 IconButton(onClick = {navController.popBackStack()}) {
                     Icon(
