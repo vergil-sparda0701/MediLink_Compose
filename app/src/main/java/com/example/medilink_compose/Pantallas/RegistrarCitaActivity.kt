@@ -59,6 +59,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
     //region declaracion de variables
 
     val scrollState = rememberScrollState()
+    val scrollState2 = rememberScrollState()
 
     val expandido = remember {mutableStateOf(false)}
     val expandido2 = remember {mutableStateOf(false)}
@@ -619,7 +620,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (resultadosBusqueda3.value.isNotEmpty()) {
-                    Column(modifier = Modifier.heightIn(max = 300.dp).verticalScroll(scrollState)) {
+                    Column(modifier = Modifier.heightIn(max = 300.dp).verticalScroll(scrollState2)) {
                         resultadosBusqueda3.value.forEach { cita ->
                             Row(
                                 modifier = Modifier
