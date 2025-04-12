@@ -106,6 +106,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
     // SCaffold con BottomAppBar
     Scaffold(
+
         modifier = Modifier.padding(vertical = 20.dp),
         topBar = {
 
@@ -130,19 +131,83 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     modifier =  Modifier.fillMaxWidth()
                 ) {
 
-                    ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick = {/*TODO*/})
+                    ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick = {
+
+                        id.value = ""
+                        hora.value = ""
+                        fecha.value = ""
+                        estadoSelec.value = ""
+                        idDoctor.value = ""
+                        nombreDoctor.value = ""
+                        apellidoDoctor.value = ""
+                        idPaciente.value = ""
+                        nombrePaciente.value = ""
+                        apellidoPaciente.value = ""
+
+
+                    })
                     Spacer(modifier = Modifier.width(2.dp))
-                    ImageButton(imageResId = R.drawable.modificar, text = "Modificar", onClick = {/*TODO*/})
+                    ImageButton(imageResId = R.drawable.modificar, text = "Modificar", onClick = {
+
+                        try {
+                            // Si pasó ambas validaciones, insertamos
+                            val registro = ContentValues()
+
+                            // Datos personales
+                            registro.put("fecha_cita", fecha.value)
+                            registro.put("hora_cita", hora.value)
+                            registro.put("estado_cita", estadoSelec.value)
+                            registro.put("id_doctor", idDoctor.value)
+                            registro.put("nombre_doc", nombreDoctor.value)
+                            registro.put("apellido_doc", apellidoDoctor.value)
+                            registro.put("id_paciente", idPaciente.value)
+                            registro.put("nombre_paciente", nombrePaciente.value)
+                            registro.put("apellido_paciente", apellidoPaciente.value)
+
+                            // Validar cédula antes de modificar
+                            if (id.value.isNotEmpty()) {
+                                val cantidad = baseDatos.update(
+                                    "citas",
+                                    registro,
+                                    "id_cita = ?",
+                                    arrayOf(id.value)
+                                )
+
+                                if (cantidad > 0) {
+                                    Toast.makeText(
+                                        context,
+                                        "Se modificó exitosamente",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "No se encontró un cita con ese id",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Debe tener un id registrado para modificar",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }catch (e: Exception) {
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            e.printStackTrace() // Útil si ves logs en Logcat
+                        }
+                    })
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {showBuscarPopup3.value = true})
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.guardar, text = "Guardar", onClick = {
-
                         try{
                             // Verificar que los campos obligatorios no estén vacíos
                             if (
                                 hora.value.isBlank() ||
                                 fecha.value.isBlank() ||
+                                estadoSelec.value.isBlank() ||
                                 idPaciente.value.isBlank() ||
                                 nombrePaciente.value.isBlank() ||
                                 apellidoPaciente.value.isBlank() ||
@@ -192,11 +257,48 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
                     })
                     Spacer(modifier = Modifier.width(2.dp))
-                    ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {/*TODO*/})
+                    ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {
 
+                        try{
+
+                            if (id.value.isNotEmpty()) {
+                                val filasAfectadas = baseDatos.delete(
+                                    "citas",
+                                    "id_cita = ?",
+                                    arrayOf(id.value)
+                                )
+
+                                if (filasAfectadas > 0) {
+                                    Toast.makeText(context, "cita eliminada exitosamente", Toast.LENGTH_LONG).show()
+
+                                    id.value = ""
+                                    hora.value = ""
+                                    fecha.value = ""
+                                    estadoSelec.value = ""
+                                    idDoctor.value = ""
+                                    nombreDoctor.value = ""
+                                    apellidoDoctor.value = ""
+                                    idPaciente.value = ""
+                                    nombrePaciente.value = ""
+                                    apellidoPaciente.value = ""
+
+                                } else {
+                                    Toast.makeText(context, "No se encontró una cita con ese id", Toast.LENGTH_LONG).show()
+                                }
+                            } else {
+                                Toast.makeText(context, "Debe tener un id registrado para eliminar", Toast.LENGTH_LONG).show()
+                            }
+
+                        }catch (e: Exception) {
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            e.printStackTrace() // Útil si ves logs en Logcat
+                        }
+
+                    })
                 }
             }
         }
+
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -528,9 +630,14 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                                         id.value = cita["id_cita"] ?:""
                                         hora.value = cita["hora_cita"] ?:""
                                         fecha.value = cita["fecha_cita"] ?:""
+                                        estadoSelec.value = cita["estado_cita"] ?:""
+
+                                        //doctor
                                         idDoctor.value = cita["id_doctor"] ?: ""
                                         nombreDoctor.value = cita["nombre_doc"] ?: ""
                                         apellidoDoctor.value = cita["apellido_doc"] ?: ""
+
+                                        //paciente
                                         idPaciente.value = cita["id_paciente"] ?: ""
                                         nombrePaciente.value = cita["nombre_paciente"] ?: ""
                                         apellidoPaciente.value = cita["apellido_paciente"] ?: ""
@@ -542,7 +649,12 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                                     .padding(8.dp)
                             ) {
                                 Text(
-                                    text = "${cita["hora_cita"]} ${cita["nombre_paciente"]} \n ${cita["nombre_doc"]}",
+                                    text = """ 
+                                        Id: ${cita["id_cita"]}
+                                        Hora: ${cita["hora_cita"]}
+                                        Paciente ${cita["nombre_paciente"]} ${cita["apellido_paciente"]} 
+                                        Doctor: ${cita["nombre_doc"]}
+                                    """.trimIndent(),
                                     modifier = Modifier.weight(1f)
 
                                 )

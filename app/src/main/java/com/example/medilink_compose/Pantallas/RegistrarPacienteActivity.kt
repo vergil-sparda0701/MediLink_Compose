@@ -188,7 +188,7 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                         registro.put("tipoSangre", sangreSelec.value)
 
                         // Validar cédula antes de modificar
-                        if (cedula.value.isNotEmpty()) {
+                        if (id.value.isNotEmpty()) {
                             val cantidad = baseDatos.update(
                                 "pacientes",
                                 registro,
@@ -203,7 +203,8 @@ fun RegistrarPacienteActivity(modifier: Modifier = Modifier, navController: NavH
                             }
                         } else {
                             Toast.makeText(context, "Debe tener un id registrado para modificar", Toast.LENGTH_LONG).show()
-                        }})
+                        }
+                    })
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {
 
