@@ -187,7 +187,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                             val cantidad = baseDatos.update(
                                 "doctores",
                                 registro,
-                                "cedula = ?",
+                                "cedula_doc = ?",
                                 arrayOf(cedula.value)
                             )
 
@@ -292,13 +292,13 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
 
                         if (cedula.value.isNotEmpty()) {
                             val filasAfectadas = baseDatos.delete(
-                                "pacientes",
-                                "cedula = ?",
+                                "doctores",
+                                "cedula_doc = ?",
                                 arrayOf(cedula.value)
                             )
 
                             if (filasAfectadas > 0) {
-                                Toast.makeText(context, "Paciente eliminado exitosamente", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Doctor eliminado exitosamente", Toast.LENGTH_LONG).show()
 
                                 // Limpiar los campos después de eliminar
                                 nombre.value = ""
@@ -322,7 +322,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                 horaFin.value = ""
 
                             } else {
-                                Toast.makeText(context, "No se encontró un paciente con esa cédula", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "No se encontró un doctor con esa cédula", Toast.LENGTH_LONG).show()
                             }
                         } else {
                             Toast.makeText(context, "Debe ingresar una cédula para eliminar", Toast.LENGTH_LONG).show()
@@ -437,7 +437,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                     val db = baseDatos
                     val query = """
                     SELECT * FROM doctores
-                    WHERE cedula LIKE ? OR nombre LIKE ?
+                    WHERE cedula_doc LIKE ? OR nombre_doc LIKE ?
                 """.trimIndent()
 
                     val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%"))
@@ -479,6 +479,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                         fecha.value = doctor["fechaNacimiento_doc"] ?: ""
                                         sexoSelec.value = doctor["sexo_doc"] ?: ""
                                         estadoCivilSelec.value = doctor["estadoCivil_doc"] ?: ""
+                                        estadoSelec.value = doctor["estado_doc"] ?: ""
                                         cedula.value = doctor["cedula_doc"] ?: ""
 
                                         celular.value = doctor["celular_doc"] ?: ""
@@ -501,7 +502,7 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                     .padding(8.dp)
                             ) {
                                 Text(
-                                    text = "${doctor["nombre"]} ${doctor["apellido"]} \n ${doctor["cedula"]}",
+                                    text = "${doctor["nombre_doc"]} ${doctor["apellido_doc"]} \n ${doctor["cedula_doc"]}",
                                     modifier = Modifier.weight(1f)
 
                                 )
