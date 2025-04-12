@@ -74,7 +74,8 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
     Scaffold(
         topBar = {
 
-            Row (horizontalArrangement = Arrangement.Start,
+            Row (Modifier.statusBarsPadding(),
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 20.dp)){
                 IconButton(onClick = {navController.popBackStack()}) {
