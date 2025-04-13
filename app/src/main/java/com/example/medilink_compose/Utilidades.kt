@@ -298,7 +298,7 @@ fun HoraConTimePicker(
         },
         horaActual,
         minutoActual,
-        true
+        false
     )
 
     OutlinedTextField(

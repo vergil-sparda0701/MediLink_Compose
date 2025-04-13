@@ -1,11 +1,12 @@
 package com.example.medilink_compose.Pantallas
 
 import android.content.ContentValues
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,18 +43,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material3.ImageButton
 import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.ComboBox
 import com.example.medilink_compose.FechaConDatePicker
 import com.example.medilink_compose.HoraConTimePicker
-import com.example.medilink_compose.HoraConTimePickerCondicion
 import com.example.medilink_compose.ImageButton
+import com.example.medilink_compose.Notificacion.pacienteCita
 import com.example.medilink_compose.R
 import com.example.medilink_compose.SeccionDesplegable
 import com.example.medilink_compose.databaseVersion
 import com.example.medilink_compose.outLinedText
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostController){
 
@@ -69,8 +72,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
     val context = LocalContext.current
     val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
     val baseDatos = dbHelper.writableDatabase
-    val listaHoras = mutableListOf<String>()
-    val cursor = baseDatos.rawQuery("SELECT hora_cita FROM citas", null)
 
     //datos de la cita
     val id = remember {mutableStateOf("")}
@@ -147,12 +148,12 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                         nombrePaciente.value = ""
                         apellidoPaciente.value = ""
 
-
                     })
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.modificar, text = "Modificar", onClick = {
 
                         try {
+                            pacienteCita(context)
                             // Si pasó ambas validaciones, insertamos
                             val registro = ContentValues()
 
@@ -206,6 +207,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.guardar, text = "Guardar", onClick = {
                         try{
+                            pacienteCita(context)
                             // Verificar que los campos obligatorios no estén vacíos
                             if (
                                 hora.value.isBlank() ||
@@ -343,7 +345,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
             Spacer(modifier = Modifier.height(16.dp))
 
             SeccionDesplegable("Datos del paciente", expandido2) {
-                Button(onClick = {showBuscarPopup.value = true},
+                Button(onClick = {showBuscarPopup.value = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
@@ -678,4 +680,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
             }
         }
     }
+
+
 }
