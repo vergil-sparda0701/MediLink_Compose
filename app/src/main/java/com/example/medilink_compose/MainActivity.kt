@@ -21,6 +21,7 @@ import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 import java.util.concurrent.TimeUnit
 import androidx.work.*
 import com.example.medilink_compose.Notificacion.CitaWorker
+import com.example.medilink_compose.Notificacion.EmailWorker
 import com.example.medilink_compose.Notificacion.mostrarNotificacion
 import com.example.medilink_compose.Notificacion.pacienteCita
 
@@ -60,28 +61,71 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        createNotificationChannel(applicationContext) // Asegúrate de crear el canal aquí o en tu MainActivity
 
-        // Programar la ejecución periódica de CitaWorker
+        // ✅ PEDIR PERMISO PARA ENVIAR SMS (Necesario desde Android 6.0)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.SEND_SMS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("MainActivity", "Solicitando permiso SEND_SMS")
+            requestPermissionLauncher.launch(android.Manifest.permission.SEND_SMS)
+        } else {
+            Log.d("MainActivity", "Permiso SEND_SMS ya concedido")
+        }
+
+
+        // ✅ PEDIR PERMISO PARA NOTIFICACIONES EN ANDROID 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("MainActivity", "Solicitando permiso POST_NOTIFICATIONS")
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                Log.d("MainActivity", "Permiso POST_NOTIFICATIONS ya concedido")
+            }
+        }
+
+        // ✅ CREAR CANAL DE NOTIFICACIONES
+        createNotificationChannel(applicationContext)
+
+        // ✅ CONFIGURAR TRABAJOS CON WORKMANAGER (Ya lo tienes bien configurado)
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_REQUIRED) // No requiere red
-            .setRequiresBatteryNotLow(false) // No requiere batería baja
-            .setRequiresCharging(false) // No requiere carga
+            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .setRequiresBatteryNotLow(false)
+            .setRequiresCharging(false)
             .build()
 
         val periodicWorkRequest = PeriodicWorkRequestBuilder<CitaWorker>(
-            15, // Intervalo de repetición
-            TimeUnit.MINUTES
+            15, TimeUnit.MINUTES
         )
             .setConstraints(constraints)
-            .setInitialDelay(5, TimeUnit.MINUTES) // Opcional: Retraso inicial
-            .addTag("cita_notification_work") // Opcional: Etiqueta para identificar el Worker
+            .setInitialDelay(5, TimeUnit.MINUTES)
+            .addTag("cita_notification_work")
             .build()
 
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            "citaNotificationWork", // Nombre único para el trabajo periódico
-            ExistingPeriodicWorkPolicy.KEEP, // Política si ya existe un trabajo con este nombre
+            "citaNotificationWork",
+            ExistingPeriodicWorkPolicy.KEEP,
             periodicWorkRequest
+        )
+
+        val periodicWorkRequest2 = PeriodicWorkRequestBuilder<EmailWorker>(
+            15, TimeUnit.MINUTES
+        )
+            .setConstraints(constraints)
+            .setInitialDelay(5, TimeUnit.MINUTES)
+            .addTag("email_notification_work")
+            .build()
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            "emailNotificationWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicWorkRequest2
         )
     }
 
