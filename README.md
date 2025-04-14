@@ -15,10 +15,6 @@
 - **Visualizar citas**: Las citas programadas se mostrarán en la pantalla principal.
 - **Recibir recordatorios**: La aplicación enviará notificaciones y correos electrónicos antes de la cita programada.
 
-## Licencia
-
-Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
-
 ## Contacto
 
 Para consultas o sugerencias:
