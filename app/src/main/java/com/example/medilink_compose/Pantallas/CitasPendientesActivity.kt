@@ -36,6 +36,7 @@ data class Cita(
     val nombrePaciente: String,
     val apellidoPaciente: String,
     val nombreDoctor: String,
+    val apellidoDoctor: String,
     val estado: String
 )
 
@@ -72,6 +73,8 @@ fun CitasPendientesActivity(
                         apellidoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
                             ?: "",
                         nombreDoctor = cursor.getString(cursor.getColumnIndexOrThrow("nombre_doc"))
+                            ?: "",
+                        apellidoDoctor = cursor.getString(cursor.getColumnIndexOrThrow("apellido_doc"))
                             ?: "",
                         estado = cursor.getString(cursor.getColumnIndexOrThrow("estado_cita")) ?: ""
                     )
@@ -141,7 +144,7 @@ fun CitasPendientesActivity(
                     Column(
                         modifier = Modifier
                             .padding(vertical = 6.dp, horizontal = 8.dp)
-                            .border(1.dp, color = Color.Black, shape = RoundedCornerShape(5.dp))
+                            .border(1.dp, color = Color(0xff00a9b0), shape = RoundedCornerShape(5.dp))
                             .background(Color.Transparent, shape = RoundedCornerShape(5.dp))
                             .padding(12.dp)
                     ) {
@@ -207,6 +210,11 @@ fun CitasPendientesActivity(
                                                     nombreDoctor = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "nombre_doc"
+                                                        )
+                                                    ) ?: "",
+                                                    apellidoDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "apellido_doc"
                                                         )
                                                     ) ?: "",
                                                     estado = newCursor.getString(
@@ -283,6 +291,11 @@ fun CitasPendientesActivity(
                                                     nombreDoctor = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "nombre_doc"
+                                                        )
+                                                    ) ?: "",
+                                                    apellidoDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "apellido_doc"
                                                         )
                                                     ) ?: "",
                                                     estado = newCursor.getString(

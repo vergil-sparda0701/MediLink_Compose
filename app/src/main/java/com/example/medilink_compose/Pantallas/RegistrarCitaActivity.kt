@@ -394,8 +394,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     .fillMaxWidth()
                     .background(Color.White)
                     .padding(16.dp)
-
-
             ) {
                 Text("Buscar paciente", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
