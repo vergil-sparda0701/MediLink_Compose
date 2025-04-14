@@ -140,7 +140,6 @@ fun CitasPendientesActivity(
                 items(resultadosBusqueda.value) { cita ->
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .padding(vertical = 6.dp, horizontal = 8.dp)
                             .border(1.dp, color = Color.Black, shape = RoundedCornerShape(5.dp))
                             .background(Color.Transparent, shape = RoundedCornerShape(5.dp))
@@ -155,79 +154,158 @@ fun CitasPendientesActivity(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                val db = dbHelper.writableDatabase
-                                val updateQuery = """
+                        Row(horizontalArrangement = Arrangement.Center){
+                            Button(
+                                onClick = {
+                                    val db = dbHelper.writableDatabase
+                                    val updateQuery = """
                             UPDATE citas
                             SET estado_cita = 'Atendida'
                             WHERE id_cita = ?
                         """.trimIndent()
-                                db.execSQL(updateQuery, arrayOf(cita.id))
-                                db.close()
+                                    db.execSQL(updateQuery, arrayOf(cita.id))
+                                    db.close()
 
-                                // Recargar citas después de actualizar
-                                val updatedDb = dbHelper.readableDatabase
-                                val refreshQuery = """
+                                    // Recargar citas después de actualizar
+                                    val updatedDb = dbHelper.readableDatabase
+                                    val refreshQuery = """
                             SELECT * FROM citas
                             WHERE estado_cita = ?
                             ORDER BY fecha_cita ASC, hora_cita ASC
                         """.trimIndent()
-                                val newCursor = updatedDb.rawQuery(refreshQuery, arrayOf("Pendiente"))
-                                val nuevosResultados = mutableListOf<Cita>()
-                                if (newCursor.moveToFirst()) {
-                                    do {
-                                        nuevosResultados.add(
-                                            Cita(
-                                                id = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "id_cita"
-                                                    )
-                                                ) ?: "",
-                                                hora = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "hora_cita"
-                                                    )
-                                                ) ?: "",
-                                                fecha = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "fecha_cita"
-                                                    )
-                                                ) ?: "",
-                                                nombrePaciente = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "nombre_paciente"
-                                                    )
-                                                ) ?: "",
-                                                apellidoPaciente = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "apellido_paciente"
-                                                    )
-                                                ) ?: "",
-                                                nombreDoctor = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "nombre_doc"
-                                                    )
-                                                ) ?: "",
-                                                estado = newCursor.getString(
-                                                    newCursor.getColumnIndexOrThrow(
-                                                        "estado_cita"
-                                                    )
-                                                ) ?: ""
+                                    val newCursor = updatedDb.rawQuery(refreshQuery, arrayOf("Pendiente"))
+                                    val nuevosResultados = mutableListOf<Cita>()
+                                    if (newCursor.moveToFirst()) {
+                                        do {
+                                            nuevosResultados.add(
+                                                Cita(
+                                                    id = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    hora = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "hora_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    fecha = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "fecha_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    nombrePaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "nombre_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    apellidoPaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "apellido_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    nombreDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "nombre_doc"
+                                                        )
+                                                    ) ?: "",
+                                                    estado = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "estado_cita"
+                                                        )
+                                                    ) ?: ""
+                                                )
                                             )
-                                        )
-                                    } while (newCursor.moveToNext())
-                                }
-                                newCursor.close()
-                                updatedDb.close()
-                                resultadosBusqueda.value = nuevosResultados
+                                        } while (newCursor.moveToNext())
+                                    }
+                                    newCursor.close()
+                                    updatedDb.close()
+                                    resultadosBusqueda.value = nuevosResultados
 
-                                Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
-                            },
+                                    Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Verde
+                            ) {
+                                Text("Atendida?")
+                            }
 
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Verde
-                        ) {
-                            Text("Atendida?")
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Button(
+                                onClick = {
+                                    val db = dbHelper.writableDatabase
+                                    val updateQuery = """
+                            UPDATE citas
+                            SET estado_cita = 'Cancelada'
+                            WHERE id_cita = ?
+                        """.trimIndent()
+                                    db.execSQL(updateQuery, arrayOf(cita.id))
+                                    db.close()
+
+                                    // Recargar citas después de actualizar
+                                    val updatedDb = dbHelper.readableDatabase
+                                    val refreshQuery = """
+                            SELECT * FROM citas
+                            WHERE estado_cita = ?
+                            ORDER BY fecha_cita ASC, hora_cita ASC
+                        """.trimIndent()
+                                    val newCursor = updatedDb.rawQuery(refreshQuery, arrayOf("Pendiente"))
+                                    val nuevosResultados = mutableListOf<Cita>()
+                                    if (newCursor.moveToFirst()) {
+                                        do {
+                                            nuevosResultados.add(
+                                                Cita(
+                                                    id = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    hora = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "hora_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    fecha = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "fecha_cita"
+                                                        )
+                                                    ) ?: "",
+                                                    nombrePaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "nombre_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    apellidoPaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "apellido_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    nombreDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "nombre_doc"
+                                                        )
+                                                    ) ?: "",
+                                                    estado = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "estado_cita"
+                                                        )
+                                                    ) ?: ""
+                                                )
+                                            )
+                                        } while (newCursor.moveToNext())
+                                    }
+                                    newCursor.close()
+                                    updatedDb.close()
+                                    resultadosBusqueda.value = nuevosResultados
+
+                                    Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red) // Verde
+                            ) {
+                                Text("Cancelada?")
+                            }
+
+
                         }
 
                     }
