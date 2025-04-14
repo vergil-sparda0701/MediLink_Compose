@@ -129,7 +129,7 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
                     }
 
                     Button(
-                        onClick = { /* TODO */ },
+                        onClick = { navController.navigate("citaPendiente") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
                     ) {

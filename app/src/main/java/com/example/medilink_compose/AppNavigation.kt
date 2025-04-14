@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medilink_compose.BD_Files.UsuarioViewModel
+import com.example.medilink_compose.Pantallas.CitasPendientesActivity
 import com.example.medilink_compose.Pantallas.HistorialActivity
 import com.example.medilink_compose.Pantallas.LoginActivity
 import com.example.medilink_compose.Pantallas.MenuActivity
@@ -51,6 +52,9 @@ fun AppNavigation (modifier: Modifier = Modifier){
 
         composable("cita"){
             RegistrarCitaActivity(modifier, navController)
+        }
+        composable("citaPendiente"){
+            CitasPendientesActivity(modifier, navController)
         }
     }
 

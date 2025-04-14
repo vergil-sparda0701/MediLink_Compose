@@ -54,15 +54,13 @@ class MainActivity : ComponentActivity() {
             MediLink_ComposeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(Modifier.padding(innerPadding))
-
-                    //createNotificationChannel(this)
                 }
 
             }
         }
 
 
-        // ✅ PEDIR PERMISO PARA ENVIAR SMS (Necesario desde Android 6.0)
+        // PEDIR PERMISO PARA ENVIAR SMS
         if (ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.SEND_SMS
@@ -75,7 +73,7 @@ class MainActivity : ComponentActivity() {
         }
 
 
-        // ✅ PEDIR PERMISO PARA NOTIFICACIONES EN ANDROID 13+
+        // PEDIR PERMISO PARA NOTIFICACIONES
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -90,16 +88,17 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // ✅ CREAR CANAL DE NOTIFICACIONES
+        // CREAR CANAL DE NOTIFICACIONES
         createNotificationChannel(applicationContext)
 
-        // ✅ CONFIGURAR TRABAJOS CON WORKMANAGER (Ya lo tienes bien configurado)
+        // CONFIGURAR TRABAJOS CON WORKMANAGER )
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
             .setRequiresBatteryNotLow(false)
             .setRequiresCharging(false)
             .build()
 
+        //WORKER NOTIFICACIONES PUSH
         val periodicWorkRequest = PeriodicWorkRequestBuilder<CitaWorker>(
             15, TimeUnit.MINUTES
         )
@@ -114,6 +113,7 @@ class MainActivity : ComponentActivity() {
             periodicWorkRequest
         )
 
+        //WORKER NOTIFICACIONES SMS
         val periodicWorkRequest2 = PeriodicWorkRequestBuilder<EmailWorker>(
             15, TimeUnit.MINUTES
         )
