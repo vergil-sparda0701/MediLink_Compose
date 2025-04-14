@@ -298,7 +298,7 @@ fun CitasPendientesActivity(
                                     updatedDb.close()
                                     resultadosBusqueda.value = nuevosResultados
 
-                                    Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, "Cita cancelada", Toast.LENGTH_LONG).show()
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red) // Verde
                             ) {
