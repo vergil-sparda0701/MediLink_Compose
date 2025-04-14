@@ -111,7 +111,7 @@ fun CitasPendientesActivity(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier =  Modifier.fillMaxWidth()
                 ) {
-                    Text("© 2025 MediLink", fontSize = 15.sp, color = Color.LightGray)
+                    Text("© 2025 MediLink", fontSize = 15.sp, color = Color.White)
                 }
             }
         }
