@@ -155,7 +155,7 @@ fun CitasPendientesActivity(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
+                        Button(modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 val db = dbHelper.writableDatabase
                                 val updateQuery = """
