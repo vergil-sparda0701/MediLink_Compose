@@ -5,20 +5,19 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.work.CoroutineWorker
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 
-class EmailWorker(appContext: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(appContext, workerParams) {
+class smsWorker(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun doWork(): Result {
+    override fun doWork(): Result {
         return try {
-            Log.d("EmailWorker", "Ejecutando pacienteCita() en segundo plano")
-            pacienteCitaEnviarSMS(applicationContext)
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                pacienteCitaEnviarSMS(applicationContext)
+            }
             Result.success()
         } catch (e: Exception) {
-            Log.e("EmailWorker", "Error durante la ejecución en segundo plano: ${e.message}")
             Result.failure()
         }
     }

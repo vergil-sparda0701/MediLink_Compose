@@ -153,7 +153,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     ImageButton(imageResId = R.drawable.modificar, text = "Modificar", onClick = {
 
                         try {
-                            pacienteCita(context)
 
                             val registro = ContentValues()
 

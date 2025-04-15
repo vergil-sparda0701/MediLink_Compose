@@ -20,10 +20,10 @@ import com.example.medilink_compose.Notificacion.createNotificationChannel
 import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 import java.util.concurrent.TimeUnit
 import androidx.work.*
-import com.example.medilink_compose.Notificacion.CitaWorker
-import com.example.medilink_compose.Notificacion.EmailWorker
+import com.example.medilink_compose.Notificacion.NotificacionWorker
 import com.example.medilink_compose.Notificacion.mostrarNotificacion
 import com.example.medilink_compose.Notificacion.pacienteCita
+import com.example.medilink_compose.Notificacion.smsWorker
 
 
 val databaseVersion : Int = 4
@@ -89,47 +89,46 @@ class MainActivity : ComponentActivity() {
         }
 
         // CREAR CANAL DE NOTIFICACIONES
-        createNotificationChannel(applicationContext)
+        createNotificationChannel(this)
+        programarNotificacionesPeriodicas(this)
+        programarSMSPeriodicos(this)
 
-        // CONFIGURAR TRABAJOS CON WORKMANAGER )
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-            .setRequiresBatteryNotLow(false)
-            .setRequiresCharging(false)
-            .build()
-
-        //WORKER NOTIFICACIONES PUSH
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<CitaWorker>(
-            15, TimeUnit.MINUTES
-        )
-            .setConstraints(constraints)
-            .setInitialDelay(5, TimeUnit.MINUTES)
-            .addTag("cita_notification_work")
-            .build()
-
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            "citaNotificationWork",
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicWorkRequest
-        )
-
-        //WORKER NOTIFICACIONES SMS
-        val periodicWorkRequest2 = PeriodicWorkRequestBuilder<EmailWorker>(
-            15, TimeUnit.MINUTES
-        )
-            .setConstraints(constraints)
-            .setInitialDelay(5, TimeUnit.MINUTES)
-            .addTag("email_notification_work")
-            .build()
-
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            "emailNotificationWork",
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicWorkRequest2
-        )
     }
 
 }
+
+fun programarNotificacionesPeriodicas(context: Context) {
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+        .build()
+
+    val request = PeriodicWorkRequestBuilder<NotificacionWorker>(15, TimeUnit.MINUTES)
+        .setConstraints(constraints)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "notificacionesCitas",
+        ExistingPeriodicWorkPolicy.KEEP,
+        request
+    )
+}
+
+fun programarSMSPeriodicos(context: Context) {
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+        .build()
+
+    val request = PeriodicWorkRequestBuilder<smsWorker>(15, TimeUnit.MINUTES)
+        .setConstraints(constraints)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "smsCitas",
+        ExistingPeriodicWorkPolicy.KEEP,
+        request
+    )
+}
+
 
 
 
