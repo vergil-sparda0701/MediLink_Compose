@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medilink_compose.BD_Files.UsuarioViewModel
 import com.example.medilink_compose.Pantallas.CitasPendientesActivity
-import com.example.medilink_compose.Pantallas.HistorialActivity
+import com.example.medilink_compose.Pantallas.HistorialActivitys
 import com.example.medilink_compose.Pantallas.LoginActivity
 import com.example.medilink_compose.Pantallas.MenuActivity
 import com.example.medilink_compose.Pantallas.RegistrarCitaActivity
@@ -42,10 +42,6 @@ fun AppNavigation (modifier: Modifier = Modifier){
             RegistrarPacienteActivity(modifier, navController)
         }
 
-        composable("historial"){
-            HistorialActivity(modifier, navController)
-        }
-
         composable("doctor"){
             RegistrarDoctorActivity(modifier, navController)
         }
@@ -56,6 +52,11 @@ fun AppNavigation (modifier: Modifier = Modifier){
         composable("citaPendiente"){
             CitasPendientesActivity(modifier, navController)
         }
+
+        composable("historiales"){
+            HistorialActivitys(modifier, navController)
+        }
+
     }
 
 }

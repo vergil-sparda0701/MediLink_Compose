@@ -154,7 +154,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
                         try {
                             pacienteCita(context)
-                            // Si pasó ambas validaciones, insertamos
+
                             val registro = ContentValues()
 
                             // Datos personales
@@ -168,7 +168,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                             registro.put("nombre_paciente", nombrePaciente.value)
                             registro.put("apellido_paciente", apellidoPaciente.value)
 
-                            // Validar cédula antes de modificar
                             if (id.value.isNotEmpty()) {
                                 val cantidad = baseDatos.update(
                                     "citas",
@@ -178,30 +177,53 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                                 )
 
                                 if (cantidad > 0) {
-                                    Toast.makeText(
-                                        context,
-                                        "Se modificó exitosamente",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    // Comprobación y acción sobre historial
+                                    val historialCursor = baseDatos.rawQuery(
+                                        "SELECT COUNT(*) FROM historial WHERE id_cita = ?",
+                                        arrayOf(id.value)
+                                    )
+                                    var existeEnHistorial = false
+                                    if (historialCursor.moveToFirst()) {
+                                        existeEnHistorial = historialCursor.getInt(0) > 0
+                                    }
+                                    historialCursor.close()
+
+                                    if (estadoSelec.value == "Atendida" && !existeEnHistorial) {
+                                        // Insertar en historial
+                                        val insertQuery = """
+                                            INSERT INTO historial (id_cita, nombre_paciente, apellido_paciente, nombre_doc, apellido_doc, fecha_cita, hora_cita, estado_cita)
+                                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                        """.trimIndent()
+                                        baseDatos.execSQL(
+                                            insertQuery, arrayOf(
+                                                id.value,
+                                                nombrePaciente.value,
+                                                apellidoPaciente.value,
+                                                nombreDoctor.value,
+                                                apellidoDoctor.value,
+                                                fecha.value,
+                                                hora.value,
+                                                "Atendida"
+                                            )
+                                        )
+                                    } else if (estadoSelec.value == "Pendiente" && existeEnHistorial) {
+                                        // Eliminar del historial si vuelve a estado "Pendiente"
+                                        baseDatos.delete("historial", "id_cita = ?", arrayOf(id.value))
+                                    }
+
+                                    Toast.makeText(context, "Se modificó exitosamente", Toast.LENGTH_LONG).show()
                                 } else {
-                                    Toast.makeText(
-                                        context,
-                                        "No se encontró un cita con ese id",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    Toast.makeText(context, "No se encontró una cita con ese id", Toast.LENGTH_LONG).show()
                                 }
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "Debe tener un id registrado para modificar",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                Toast.makeText(context, "Debe tener un id registrado para modificar", Toast.LENGTH_LONG).show()
                             }
-                        }catch (e: Exception) {
+                        } catch (e: Exception) {
                             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                            e.printStackTrace() // Útil si ves logs en Logcat
+                            e.printStackTrace()
                         }
                     })
+
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {showBuscarPopup3.value = true})
                     Spacer(modifier = Modifier.width(2.dp))

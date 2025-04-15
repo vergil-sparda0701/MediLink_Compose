@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+
 class SQLiteHelper(
     context: Context,
     s: String,
@@ -113,11 +114,34 @@ class SQLiteHelper(
 
         """.trimIndent())
 
+        db?.execSQL(""" 
+            CREATE TABLE historial (
+                id_historial INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_cita INTEGER NOT NULL,
+                fecha_cita DATE NOT NULL,
+                hora_cita TIME,
+                estado_cita TEXT,
+                
+                --Datos doctor
+                id_doctor INTEGER,
+                nombre_doc TEXT,
+                apellido_doc TEXT,
+                
+                --Datos paciente
+                id_paciente INTEGER,
+                nombre_paciente TEXT,
+                apellido_paciente TEXT,
+                
+                FOREIGN KEY(id_cita) REFERENCES citas(id_cita) ON DELETE CASCADE
+            )
+
+        """.trimIndent())
+
 
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val tablas = listOf("pacientes", "usuarios", "doctores", "citas") // Agregá aquí todas las tablas nuevas que vayas creando
+        val tablas = listOf("pacientes", "usuarios", "doctores", "citas", "historial") // Agregá aquí todas las tablas nuevas que vayas creando
         tablas.forEach { tabla ->
             db?.execSQL("DROP TABLE IF EXISTS $tabla")
         }

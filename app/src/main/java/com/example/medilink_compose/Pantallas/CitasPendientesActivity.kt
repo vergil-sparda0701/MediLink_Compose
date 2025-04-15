@@ -33,8 +33,10 @@ data class Cita(
     val id: String,
     val hora: String,
     val fecha: String,
+    val idPaciente: String,
     val nombrePaciente: String,
     val apellidoPaciente: String,
+    val idDoctor: String,
     val nombreDoctor: String,
     val apellidoDoctor: String,
     val estado: String
@@ -68,10 +70,12 @@ fun CitasPendientesActivity(
                         id = cursor.getString(cursor.getColumnIndexOrThrow("id_cita")) ?: "",
                         hora = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita")) ?: "",
                         fecha = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita")) ?: "",
+                        idPaciente = cursor.getString(cursor.getColumnIndexOrThrow("id_paciente")) ?: "",
                         nombrePaciente = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
                             ?: "",
                         apellidoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
                             ?: "",
+                        idDoctor = cursor.getString(cursor.getColumnIndexOrThrow("id_doctor")) ?: "",
                         nombreDoctor = cursor.getString(cursor.getColumnIndexOrThrow("nombre_doc"))
                             ?: "",
                         apellidoDoctor = cursor.getString(cursor.getColumnIndexOrThrow("apellido_doc"))
@@ -158,15 +162,39 @@ fun CitasPendientesActivity(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Row(horizontalArrangement = Arrangement.Center){
+
                             Button(
                                 onClick = {
+
+                                    //Marcar como Cancelada
                                     val db = dbHelper.writableDatabase
                                     val updateQuery = """
-                            UPDATE citas
-                            SET estado_cita = 'Atendida'
-                            WHERE id_cita = ?
-                        """.trimIndent()
+                                    UPDATE citas
+                                    SET estado_cita = 'Atendida'
+                                    WHERE id_cita = ?
+                                     """.trimIndent()
                                     db.execSQL(updateQuery, arrayOf(cita.id))
+
+                                    //Insertar en tabla historial
+                                    val insertHistorialQuery = """
+                                    INSERT INTO historial (id_cita, id_paciente, nombre_paciente, apellido_paciente, id_doctor, nombre_doc, apellido_doc, fecha_cita, hora_cita, estado_cita)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    """.trimIndent()
+                                    db.execSQL(
+                                        insertHistorialQuery, arrayOf(
+                                            cita.id,
+                                            cita.idPaciente,
+                                            cita.nombrePaciente,
+                                            cita.apellidoPaciente,
+                                            cita.idDoctor,
+                                            cita.nombreDoctor,
+                                            cita.apellidoDoctor,
+                                            cita.fecha,
+                                            cita.hora,
+                                            "Atendida"
+                                        )
+                                    )
+
                                     db.close()
 
                                     // Recargar citas después de actualizar
@@ -197,6 +225,11 @@ fun CitasPendientesActivity(
                                                             "fecha_cita"
                                                         )
                                                     ) ?: "",
+                                                    idPaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_paciente"
+                                                        )
+                                                    ) ?: "",
                                                     nombrePaciente = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "nombre_paciente"
@@ -205,6 +238,11 @@ fun CitasPendientesActivity(
                                                     apellidoPaciente = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "apellido_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    idDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_doctor"
                                                         )
                                                     ) ?: "",
                                                     nombreDoctor = newCursor.getString(
@@ -232,22 +270,46 @@ fun CitasPendientesActivity(
 
                                     Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Verde
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Green) // Verde
                             ) {
                                 Text("Atendida?")
                             }
+
 
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Button(
                                 onClick = {
+
+                                    //Marcar como Cancelada
                                     val db = dbHelper.writableDatabase
                                     val updateQuery = """
-                            UPDATE citas
-                            SET estado_cita = 'Cancelada'
-                            WHERE id_cita = ?
-                        """.trimIndent()
+                                    UPDATE citas
+                                    SET estado_cita = 'Cancelada'
+                                    WHERE id_cita = ?
+                                     """.trimIndent()
                                     db.execSQL(updateQuery, arrayOf(cita.id))
+
+                                    //Insertar en tabla historial
+                                    val insertHistorialQuery = """
+                                    INSERT INTO historial (id_cita, id_paciente, nombre_paciente, apellido_paciente, id_doctor, nombre_doc, apellido_doc, fecha_cita, hora_cita, estado_cita)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    """.trimIndent()
+                                    db.execSQL(
+                                        insertHistorialQuery, arrayOf(
+                                            cita.id,
+                                            cita.idPaciente,
+                                            cita.nombrePaciente,
+                                            cita.apellidoPaciente,
+                                            cita.idDoctor,
+                                            cita.nombreDoctor,
+                                            cita.apellidoDoctor,
+                                            cita.fecha,
+                                            cita.hora,
+                                            "Cancelada"
+                                        )
+                                    )
+
                                     db.close()
 
                                     // Recargar citas después de actualizar
@@ -278,6 +340,11 @@ fun CitasPendientesActivity(
                                                             "fecha_cita"
                                                         )
                                                     ) ?: "",
+                                                    idPaciente = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_paciente"
+                                                        )
+                                                    ) ?: "",
                                                     nombrePaciente = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "nombre_paciente"
@@ -286,6 +353,11 @@ fun CitasPendientesActivity(
                                                     apellidoPaciente = newCursor.getString(
                                                         newCursor.getColumnIndexOrThrow(
                                                             "apellido_paciente"
+                                                        )
+                                                    ) ?: "",
+                                                    idDoctor = newCursor.getString(
+                                                        newCursor.getColumnIndexOrThrow(
+                                                            "id_doctor"
                                                         )
                                                     ) ?: "",
                                                     nombreDoctor = newCursor.getString(

@@ -76,7 +76,7 @@ fun pacienteCita2(context: Context) {
     Log.d("PacienteCita", "Hora actual: $ahora")
 
     val cursor = db.rawQuery(
-        "SELECT * FROM citas",
+        "SELECT * FROM citas WHERE estado_cita = 'Pendiente'",
         null
     )
 

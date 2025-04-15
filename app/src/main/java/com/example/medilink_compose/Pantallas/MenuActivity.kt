@@ -1,5 +1,6 @@
 package com.example.medilink_compose.Pantallas
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,10 +32,9 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
 
     val scrollState = rememberScrollState()
 
-
     val navItems = listOf(
         NavItem("Inicio", Icons.Default.Home, "Menu"),
-        NavItem("Historial", Icons.Default.Refresh, "historial"),
+        NavItem("Historial", Icons.Default.Refresh, "historiales"),
         NavItem("Config", Icons.Default.Settings, "")
     )
 
@@ -135,6 +136,7 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
                     ) {
                         Text("Citas pendientes")
                     }
+                    
                 }
             }
         }

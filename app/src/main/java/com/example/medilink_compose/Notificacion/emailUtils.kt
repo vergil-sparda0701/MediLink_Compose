@@ -18,16 +18,18 @@ fun pacienteCitaEnviarSMS(context: Context) {
 
     val cursor = db.rawQuery(
         """
-        SELECT
-            citas.fecha_cita,
-            citas.hora_cita,
-            pacientes.celular,
-            citas.nombre_paciente,
-            citas.apellido_paciente
-        FROM citas
-        INNER JOIN pacientes ON citas.id_paciente = pacientes.id
-        """, null
+    SELECT
+        citas.fecha_cita,
+        citas.hora_cita,
+        pacientes.celular,
+        citas.nombre_paciente,
+        citas.apellido_paciente
+    FROM citas
+    INNER JOIN pacientes ON citas.id_paciente = pacientes.id
+    WHERE estado_cita = 'Pendiente'
+    """, null
     )
+
 
     while (cursor.moveToNext()) {
         try {
