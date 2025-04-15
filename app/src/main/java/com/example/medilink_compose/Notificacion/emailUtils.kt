@@ -48,6 +48,7 @@ fun pacienteCitaEnviarSMS(context: Context) {
             val diferencia = Duration.between(ahora, citaDateTime).toMinutes()
 
             if (diferencia in 25..35) {
+
                 val mensaje = "Hola $nombrePaciente $apellidoPaciente, este es un recordatorio de tu cita médica hoy a las $horaStr. ¡No faltes!"
 
                 Log.d("SMSCita", "Enviando SMS a: $telefonoPaciente")

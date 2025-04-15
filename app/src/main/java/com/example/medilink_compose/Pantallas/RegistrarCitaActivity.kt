@@ -228,7 +228,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     Spacer(modifier = Modifier.width(2.dp))
                     ImageButton(imageResId = R.drawable.guardar, text = "Guardar", onClick = {
                         try{
-                           
+
                             // Verificar que los campos obligatorios no estén vacíos
                             if (
                                 hora.value.isBlank() ||

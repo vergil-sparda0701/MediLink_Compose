@@ -80,38 +80,29 @@ fun pacienteCita(context: Context) {
     )
 
     while (cursor.moveToNext()) {
-        val fechaStr = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita"))
-        val horaStr = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita"))
-
-        Log.d("PacienteCita", "Cita encontrada - Fecha: $fechaStr, Hora: $horaStr")
-
         try {
-            // **Reemplaza con el formato real de tu base de datos**
-            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy") // Ejemplo: "2025-04-12"
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")   // Ejemplo: "23:56"
+            val fechaStr = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita"))
+            val horaStr = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita"))
+            val nombrePaciente = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
+            val apellidoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
 
+            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
             val fecha = LocalDate.parse(fechaStr, dateFormatter)
             val hora = LocalTime.parse(horaStr, timeFormatter)
             val citaDateTime = LocalDateTime.of(fecha, hora)
 
-            // Calcular la diferencia de tiempo en minutos entre la hora actual y la hora de la cita
             val diferencia = Duration.between(ahora, citaDateTime).toMinutes()
 
-            Log.d("PacienteCita", "Diferencia entre ahora y la cita: $diferencia minutos")
+            if (diferencia in 25..35) {
 
-            // Verifica si la cita es dentro de los 30 minutos previos a la hora de la cita
-            if (diferencia in 25..35) { // 30 minutos antes (+/- 5 minutos)
-                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
-                val apellido = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
+                val mensaje = "Cita con el paciente: $nombrePaciente $apellidoPaciente hoy a las $horaStr."
 
-                val mensaje = "Cita con el paciente: $nombre $apellido a las $horaStr"
-                mostrarNotificacion(context, "Recordatorio de cita", mensaje)
-
-                Log.d("PacienteCita", "Notificación enviada: $mensaje")
+                Log.d("Notificacion cita", "Enviando notificacion")
+                mostrarNotificacion(context, "Recordatorio cita", mensaje)
             }
         } catch (e: Exception) {
-            Log.e("PacienteCita", "Error al analizar fecha u hora: ${e.message}")
-            e.printStackTrace()
+            Log.e("notificacion cita", "Error al procesar cita: ${e.message}")
         }
     }
 

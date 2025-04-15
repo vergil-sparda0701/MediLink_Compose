@@ -102,7 +102,8 @@ fun programarNotificacionesPeriodicas(context: Context) {
         .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
         .build()
 
-    val request = PeriodicWorkRequestBuilder<NotificacionWorker>(15, TimeUnit.MINUTES)
+    Log.d("WorkerTimer", "intervalo de tiempo en el worker")
+    val request = PeriodicWorkRequestBuilder<NotificacionWorker>(5, TimeUnit.MINUTES)
         .setConstraints(constraints)
         .build()
 
@@ -118,7 +119,7 @@ fun programarSMSPeriodicos(context: Context) {
         .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
         .build()
 
-    val request = PeriodicWorkRequestBuilder<smsWorker>(15, TimeUnit.MINUTES)
+    val request = PeriodicWorkRequestBuilder<smsWorker>(5, TimeUnit.MINUTES)
         .setConstraints(constraints)
         .build()
 
