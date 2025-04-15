@@ -65,61 +65,6 @@ fun mostrarNotificacion(context: Context, titulo: String, mensaje: String) {
 }
 
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun pacienteCita2(context: Context) {
-    val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
-    val db = dbHelper.readableDatabase
-
-    val ahora = LocalDateTime.now()
-
-    Log.d("PacienteCita", "Hora actual: $ahora")
-
-    val cursor = db.rawQuery(
-        "SELECT * FROM citas WHERE estado_cita = 'Pendiente'",
-        null
-    )
-
-    while (cursor.moveToNext()) {
-        val fechaStr = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita"))
-        val horaStr = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita"))
-
-        Log.d("PacienteCita", "Cita encontrada - Fecha: $fechaStr, Hora: $horaStr")
-
-        try {
-            // **Reemplaza con el formato real de tu base de datos**
-            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy") // Ejemplo: "2025-04-12"
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")   // Ejemplo: "23:56"
-
-            val fecha = LocalDate.parse(fechaStr, dateFormatter)
-            val hora = LocalTime.parse(horaStr, timeFormatter)
-            val citaDateTime = LocalDateTime.of(fecha, hora)
-
-            val diferencia = Duration.between(ahora, citaDateTime).toMinutes()
-
-            Log.d("PacienteCita", "Diferencia entre ahora y la cita: $diferencia minutos")
-
-            if (diferencia in -5..5) {
-
-                val nombre = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
-                val apellido = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
-
-                val mensaje = "Cita con el paciente: $nombre $apellido a las $horaStr"
-                mostrarNotificacion(context, "Recordatorio de cita", mensaje)
-
-                Log.d("PacienteCita", "Notificación enviada: $mensaje")
-
-            }
-        } catch (e: Exception) {
-            Log.e("PacienteCita", "Error al analizar fecha u hora: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-    cursor.close()
-    db.close()
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
 fun pacienteCita(context: Context) {
     val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
@@ -130,7 +75,7 @@ fun pacienteCita(context: Context) {
     Log.d("PacienteCita", "Hora actual: $ahora")
 
     val cursor = db.rawQuery(
-        "SELECT * FROM citas",
+        "SELECT * FROM citas WHERE estado_cita = 'Pendiente'",
         null
     )
 

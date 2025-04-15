@@ -270,8 +270,8 @@ fun CitasPendientesActivity(
 
                                     Toast.makeText(context, "Cita atendida", Toast.LENGTH_LONG).show()
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Green) // Verde
-                            ) {
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff0d730d))) // Verde
+                             {
                                 Text("Atendida?")
                             }
 
