@@ -151,6 +151,7 @@ fun CitasPendientesActivity(
                             .border(1.dp, color = Color(0xff00a9b0), shape = RoundedCornerShape(5.dp))
                             .background(Color.Transparent, shape = RoundedCornerShape(5.dp))
                             .padding(12.dp)
+                            .fillMaxWidth()
                     ) {
                         Text("ID: ${cita.id}", fontWeight = FontWeight.Bold)
                         Text("Hora: ${cita.hora}")
@@ -161,7 +162,7 @@ fun CitasPendientesActivity(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Row(horizontalArrangement = Arrangement.Center){
+                        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()){
 
                             Button(
                                 onClick = {

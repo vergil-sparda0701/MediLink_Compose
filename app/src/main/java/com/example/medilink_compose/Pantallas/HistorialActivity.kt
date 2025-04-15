@@ -153,6 +153,7 @@ fun HistorialActivitys(
                             .border(1.dp, color = Color(0xff00a9b0), shape = RoundedCornerShape(5.dp))
                             .background(Color.Transparent, shape = RoundedCornerShape(5.dp))
                             .padding(12.dp)
+                            .fillMaxWidth()
                     ) {
                         Text("ID: ${cita.id}", fontWeight = FontWeight.Bold)
                         Text("Hora: ${cita.hora}")
