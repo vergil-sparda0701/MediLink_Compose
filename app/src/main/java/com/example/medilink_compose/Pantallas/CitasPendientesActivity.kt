@@ -156,7 +156,7 @@ fun CitasPendientesActivity(
                         Text("Hora: ${cita.hora}")
                         Text("Fecha: ${cita.fecha}")
                         Text("Paciente: ${cita.nombrePaciente} ${cita.apellidoPaciente}")
-                        Text("Doctor: ${cita.nombreDoctor}")
+                        Text("Doctor: ${cita.nombreDoctor} ${cita.apellidoDoctor}")
                         Text("Estado: ${cita.estado}")
 
                         Spacer(modifier = Modifier.height(8.dp))
