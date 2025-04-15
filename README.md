@@ -12,8 +12,8 @@
 ## Uso
 
 - **Programar una cita**: Navega a la sección de citas y selecciona "Agregar nueva cita".
-- **Visualizar citas**: Las citas programadas se mostrarán en la pantalla principal.
-- **Recibir recordatorios**: La aplicación enviará notificaciones y correos electrónicos antes de la cita programada.
+- **Visualizar citas**: Las citas programadas se mostrarán en la pantalla "Citas pendientes".
+- **Recibir recordatorios**: La aplicación enviará notificaciones y mensajes SMS antes de la cita programada.
 
 ## Contacto
 
