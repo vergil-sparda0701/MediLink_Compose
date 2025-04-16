@@ -12,6 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,6 +44,12 @@ data class historial(
     val nombreDoctor: String,
     val apellidoDoctor: String,
     val estado: String
+)
+
+val navItems = listOf(
+    NavItem("Inicio", Icons.Default.Home, "Menu"),
+    NavItem("Historial", Icons.Default.Refresh, "historiales"),
+    NavItem("Config", Icons.Default.Settings, "")
 )
 
 
@@ -115,12 +124,27 @@ fun HistorialActivitys(
                 containerColor = Color(0xFF00A9B0),
                 contentColor = Color.White
             ) {
-
-                Row (horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier =  Modifier.fillMaxWidth()
-                ) {
-                    Text("© 2025 MediLink", fontSize = 15.sp, color = Color.White)
+                NavigationBar(containerColor = Color(0xFF00A9B0)) {
+                    navItems.forEach { item ->
+                        NavigationBarItem(
+                            selected = false,
+                            onClick = { navController.navigate(item.route) },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.label
+                                )
+                            },
+                            label = {
+                                Text(item.label)
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = Color.White,
+                                unselectedIconColor = Color.White.copy(alpha = 0.7f),
+                                indicatorColor = Color(0xFF00777A)
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -170,3 +194,4 @@ fun HistorialActivitys(
 
     }
 }
+
