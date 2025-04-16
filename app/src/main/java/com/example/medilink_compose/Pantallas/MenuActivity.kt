@@ -38,6 +38,7 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
         NavItem("Config", Icons.Default.Settings, "")
     )
 
+
     Scaffold(
 
         bottomBar = {

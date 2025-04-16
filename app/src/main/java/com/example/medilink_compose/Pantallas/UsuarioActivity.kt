@@ -29,6 +29,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +58,7 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
 
     val scrollState = rememberScrollState()
 
+    val id = remember { mutableStateOf("") }
     val usuario = remember { mutableStateOf("") }
     val clave = remember { mutableStateOf("") }
     val rol = listOf("Doctor", "Administrador", "Paciente")
@@ -231,6 +233,7 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    outLinedText(id, "Codigo", Modifier.fillMaxWidth(), false, true, false, true)
                     outLinedText(usuario, "Nombre de usuario", Modifier.fillMaxWidth(), false, true)
                     OutlinedPasswordField(clave, "Contraseña", Modifier.fillMaxWidth(), true)
                     ComboBox(rol, rolSelec, "Rol", false)
@@ -241,53 +244,68 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
 
     }// fin main content
 
-    //Dialog para buscar paciente
     if (showBuscarPopup.value) {
         Dialog(onDismissRequest = { showBuscarPopup.value = false }) {
+
+            val colors = MaterialTheme.colorScheme
+
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
-
-
             ) {
-                Text("Buscar usuario", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Buscar usuario",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda, "Buscar por usuario o rol", Modifier.fillMaxWidth(), false, true)
+                outLinedText(
+                    textoBusqueda,
+                    "Buscar por usuario o rol",
+                    Modifier.fillMaxWidth(),
+                    false,
+                    true
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Button(onClick = {
-                    val db = baseDatos
-                    val query = """
-                    SELECT * FROM usuarios
-                    WHERE usuario LIKE ? OR rol LIKE ?
-                """.trimIndent()
+                Button(
+                    onClick = {
+                        val db = baseDatos
+                        val query = """
+                        SELECT * FROM usuarios
+                        WHERE usuario LIKE ? OR rol LIKE ?
+                    """.trimIndent()
 
-                    val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%"))
+                        val cursor = db.rawQuery(
+                            query,
+                            arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%")
+                        )
 
-                    val resultados = mutableListOf<Map<String, String>>()
+                        val resultados = mutableListOf<Map<String, String>>()
 
-                    if (cursor.moveToFirst()) {
-                        do {
-                            val usuario = mutableMapOf<String, String>()
-                            for (i in 0 until cursor.columnCount) {
-                                usuario[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
-                            }
-                            resultados.add(usuario)
-                        } while (cursor.moveToNext())
-                    }
-                    cursor.close()
-                    resultadosBusqueda.value = resultados
-
-                },
+                        if (cursor.moveToFirst()) {
+                            do {
+                                val usuario = mutableMapOf<String, String>()
+                                for (i in 0 until cursor.columnCount) {
+                                    usuario[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
+                                }
+                                resultados.add(usuario)
+                            } while (cursor.moveToNext())
+                        }
+                        cursor.close()
+                        resultadosBusqueda.value = resultados
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
-                    )) {
-                    Text("Buscar")
+                        containerColor = colors.primary
+                    )
+                ) {
+                    Text("Buscar", color = colors.onPrimary)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -300,38 +318,41 @@ fun UsuarioActivity(modifier: Modifier = Modifier, navController: NavHostControl
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        // Rellenar campos
+                                        id.value = usuarios["id_Usuario"] ?: ""
                                         usuario.value = usuarios["usuario"] ?: ""
                                         clave.value = usuarios["clave"] ?: ""
                                         rolSelec.value = usuarios["rol"] ?: ""
 
                                         showBuscarPopup.value = false
-
                                     }
-                                    .background(Color(0xFFE0F7FA))
+                                    .background(colors.surfaceVariant)
                                     .padding(8.dp)
                             ) {
                                 Text(
                                     text = "${usuarios["usuario"]} \n ${usuarios["rol"]}",
-                                    modifier = Modifier.weight(1f)
-
+                                    modifier = Modifier.weight(1f),
+                                    color = colors.onSurfaceVariant
                                 )
                             }
                         }
                     }
                 } else {
-                    Text("Sin resultados", color = Color.Gray)
+                    Text("Sin resultados", color = colors.onBackground.copy(alpha = 0.5f))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = { showBuscarPopup.value = false }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red // Aquí el color hexadecimal
-                )) {
-                    Text("Cerrar")
+                Button(
+                    onClick = { showBuscarPopup.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.error
+                    )
+                ) {
+                    Text("Cerrar", color = colors.onError)
                 }
             }
         }
     }
+
 
 }

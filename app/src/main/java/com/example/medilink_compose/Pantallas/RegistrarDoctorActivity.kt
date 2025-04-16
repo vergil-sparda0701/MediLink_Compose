@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -421,53 +422,68 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
 
     }
 
-    //Dialog para buscar paciente
+    //Dialog para buscar doctor
     if (showBuscarPopup.value) {
         Dialog(onDismissRequest = { showBuscarPopup.value = false }) {
+            val colors = MaterialTheme.colorScheme
+
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
-
-
             ) {
-                Text("Buscar doctor", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Buscar doctor",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda, "Buscar por cédula o nombre", Modifier.fillMaxWidth(), false, true)
+                outLinedText(
+                    textoBusqueda,
+                    "Buscar por cédula o nombre",
+                    Modifier.fillMaxWidth(),
+                    false,
+                    true
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Button(onClick = {
-                    val db = baseDatos
-                    val query = """
-                    SELECT * FROM doctores
-                    WHERE cedula_doc LIKE ? OR nombre_doc LIKE ?
-                """.trimIndent()
+                Button(
+                    onClick = {
+                        val db = baseDatos
+                        val query = """
+                        SELECT * FROM doctores
+                        WHERE cedula_doc LIKE ? OR nombre_doc LIKE ?
+                    """.trimIndent()
 
-                    val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%"))
+                        val cursor = db.rawQuery(
+                            query,
+                            arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%")
+                        )
 
-                    val resultados = mutableListOf<Map<String, String>>()
+                        val resultados2 = mutableListOf<Map<String, String>>()
 
-                    if (cursor.moveToFirst()) {
-                        do {
-                            val doctor = mutableMapOf<String, String>()
-                            for (i in 0 until cursor.columnCount) {
-                                doctor[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
-                            }
-                            resultados.add(doctor)
-                        } while (cursor.moveToNext())
-                    }
-                    cursor.close()
-                    resultadosBusqueda.value = resultados
-
-                },
+                        if (cursor.moveToFirst()) {
+                            do {
+                                val doctor = mutableMapOf<String, String>()
+                                for (i in 0 until cursor.columnCount) {
+                                    doctor[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
+                                }
+                                resultados2.add(doctor)
+                            } while (cursor.moveToNext())
+                        }
+                        cursor.close()
+                        resultadosBusqueda.value = resultados2
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
-                    )) {
-                    Text("Buscar")
+                        containerColor = colors.primary
+                    )
+                ) {
+                    Text("Buscar", color = colors.onPrimary)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -504,29 +520,34 @@ fun RegistrarDoctorActivity(modifier: Modifier, navController: NavHostController
                                         horaFin.value = doctor["horaSalida_doc"] ?: ""
 
                                         showBuscarPopup.value = false
-
                                     }
-                                    .background(Color(0xFFE0F7FA))
+                                    .background(colors.surfaceVariant)
                                     .padding(8.dp)
                             ) {
                                 Text(
                                     text = "${doctor["nombre_doc"]} ${doctor["apellido_doc"]} \n ${doctor["cedula_doc"]}",
-                                    modifier = Modifier.weight(1f)
-
+                                    modifier = Modifier.weight(1f),
+                                    color = colors.onSurfaceVariant
                                 )
                             }
                         }
                     }
                 } else {
-                    Text("Sin resultados", color = Color.Gray)
+                    Text(
+                        "Sin resultados",
+                        color = colors.onBackground.copy(alpha = 0.5f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = { showBuscarPopup.value = false }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red // Aquí el color hexadecimal
-                )) {
-                    Text("Cerrar")
+                Button(
+                    onClick = { showBuscarPopup.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.error
+                    )
+                ) {
+                    Text("Cerrar", color = colors.onError)
                 }
             }
         }

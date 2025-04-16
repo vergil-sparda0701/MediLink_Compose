@@ -28,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -409,48 +410,61 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
     //Dialog para buscar paciente
     if (showBuscarPopup.value) {
         Dialog(onDismissRequest = { showBuscarPopup.value = false }) {
+            val colors = MaterialTheme.colorScheme
+
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
             ) {
-                Text("Buscar paciente", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Buscar paciente",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda, "Buscar por cédula o nombre", Modifier.fillMaxWidth(), false, true)
+                outLinedText(
+                    textoBusqueda,
+                    "Buscar por cédula o nombre",
+                    Modifier.fillMaxWidth(),
+                    false,
+                    true
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Button(onClick = {
-                    val db = baseDatos
-                    val query = """
-                    SELECT * FROM pacientes
-                    WHERE cedula LIKE ? OR nombre LIKE ?
-                """.trimIndent()
+                Button(
+                    onClick = {
+                        val db = baseDatos
+                        val query = """
+                        SELECT * FROM pacientes
+                        WHERE cedula LIKE ? OR nombre LIKE ? AND estado = ?
+                    """.trimIndent()
 
-                    val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%"))
+                        val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda.value}%", "%${textoBusqueda.value}%", "Activo"))
+                        val resultados = mutableListOf<Map<String, String>>()
 
-                    val resultados = mutableListOf<Map<String, String>>()
-
-                    if (cursor.moveToFirst()) {
-                        do {
-                            val paciente = mutableMapOf<String, String>()
-                            for (i in 0 until cursor.columnCount) {
-                                paciente[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
-                            }
-                            resultados.add(paciente)
-                        } while (cursor.moveToNext())
-                    }
-                    cursor.close()
-                    resultadosBusqueda.value = resultados
-
-                },
+                        if (cursor.moveToFirst()) {
+                            do {
+                                val paciente = mutableMapOf<String, String>()
+                                for (i in 0 until cursor.columnCount) {
+                                    paciente[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
+                                }
+                                resultados.add(paciente)
+                            } while (cursor.moveToNext())
+                        }
+                        cursor.close()
+                        resultadosBusqueda.value = resultados
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
-                    )) {
-                    Text("Buscar")
+                        containerColor = colors.primary
+                    )
+                ) {
+                    Text("Buscar", color = colors.onPrimary)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -463,87 +477,103 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        // Rellenar campos
                                         idPaciente.value = paciente["id"] ?: ""
                                         nombrePaciente.value = paciente["nombre"] ?: ""
                                         apellidoPaciente.value = paciente["apellido"] ?: ""
-
                                         showBuscarPopup.value = false
-
                                     }
-                                    .background(Color(0xFFE0F7FA))
+                                    .background(colors.surfaceVariant)
                                     .padding(8.dp)
                             ) {
                                 Text(
                                     text = "${paciente["nombre"]} ${paciente["apellido"]} \n ${paciente["cedula"]}",
-                                    modifier = Modifier.weight(1f)
-
+                                    modifier = Modifier.weight(1f),
+                                    color = colors.onSurfaceVariant
                                 )
                             }
                         }
                     }
                 } else {
-                    Text("Sin resultados", color = Color.Gray)
+                    Text("Sin resultados", color = colors.onBackground.copy(alpha = 0.5f))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = { showBuscarPopup.value = false }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red // Aquí el color hexadecimal
-                )) {
-                    Text("Cerrar")
+                Button(
+                    onClick = { showBuscarPopup.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.error
+                    )
+                ) {
+                    Text("Cerrar", color = colors.onError)
                 }
             }
         }
     }
 
+
     //Dialog para buscar doctor
     if (showBuscarPopup2.value) {
         Dialog(onDismissRequest = { showBuscarPopup2.value = false }) {
+            val colors = MaterialTheme.colorScheme
+
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
-
-
             ) {
-                Text("Buscar doctor", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Buscar doctor",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda2, "Buscar por cédula o nombre", Modifier.fillMaxWidth(), false, true)
+                outLinedText(
+                    textoBusqueda2,
+                    "Buscar por cédula o nombre",
+                    Modifier.fillMaxWidth(),
+                    false,
+                    true
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Button(onClick = {
-                    val db = baseDatos
-                    val query = """
-                    SELECT * FROM doctores
-                    WHERE cedula_doc LIKE ? OR nombre_doc LIKE ?
-                """.trimIndent()
+                Button(
+                    onClick = {
+                        val db = baseDatos
+                        val query = """
+                        SELECT * FROM doctores
+                        WHERE cedula_doc LIKE ? OR nombre_doc LIKE ? AND estado_doc = ?
+                    """.trimIndent()
 
-                    val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda2.value}%", "%${textoBusqueda2.value}%"))
+                        val cursor = db.rawQuery(
+                            query,
+                            arrayOf("%${textoBusqueda2.value}%", "%${textoBusqueda2.value}%", "Activo")
+                        )
 
-                    val resultados2 = mutableListOf<Map<String, String>>()
+                        val resultados2 = mutableListOf<Map<String, String>>()
 
-                    if (cursor.moveToFirst()) {
-                        do {
-                            val doctor = mutableMapOf<String, String>()
-                            for (i in 0 until cursor.columnCount) {
-                                doctor[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
-                            }
-                            resultados2.add(doctor)
-                        } while (cursor.moveToNext())
-                    }
-                    cursor.close()
-                    resultadosBusqueda2.value = resultados2
-
-                },
+                        if (cursor.moveToFirst()) {
+                            do {
+                                val doctor = mutableMapOf<String, String>()
+                                for (i in 0 until cursor.columnCount) {
+                                    doctor[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
+                                }
+                                resultados2.add(doctor)
+                            } while (cursor.moveToNext())
+                        }
+                        cursor.close()
+                        resultadosBusqueda2.value = resultados2
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
-                    )) {
-                    Text("Buscar")
+                        containerColor = colors.primary
+                    )
+                ) {
+                    Text("Buscar", color = colors.onPrimary)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -556,149 +586,173 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        // Rellenar campos
                                         idDoctor.value = doctor["id_doctor"] ?: ""
                                         nombreDoctor.value = doctor["nombre_doc"] ?: ""
                                         apellidoDoctor.value = doctor["apellido_doc"] ?: ""
 
                                         showBuscarPopup2.value = false
-
                                     }
-                                    .background(Color(0xFFE0F7FA))
+                                    .background(colors.surfaceVariant)
                                     .padding(8.dp)
                             ) {
                                 Text(
                                     text = "${doctor["nombre_doc"]} ${doctor["apellido_doc"]} \n ${doctor["cedula_doc"]}",
-                                    modifier = Modifier.weight(1f)
-
+                                    modifier = Modifier.weight(1f),
+                                    color = colors.onSurfaceVariant
                                 )
                             }
                         }
                     }
                 } else {
-                    Text("Sin resultados", color = Color.Gray)
+                    Text(
+                        "Sin resultados",
+                        color = colors.onBackground.copy(alpha = 0.5f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = { showBuscarPopup2.value = false }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red // Aquí el color hexadecimal
-                )) {
-                    Text("Cerrar")
+                Button(
+                    onClick = { showBuscarPopup2.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.error
+                    )
+                ) {
+                    Text("Cerrar", color = colors.onError)
                 }
             }
         }
     }
 
-    //Dialog para buscar doctor
+
+    //Dialogo para buscar cita
     if (showBuscarPopup3.value) {
-        Dialog(onDismissRequest = { showBuscarPopup2.value = false }) {
+        Dialog(onDismissRequest = { showBuscarPopup3.value = false }) {
+
+            val colors = MaterialTheme.colorScheme
+
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-
-                    .background(Color.White)
+                    .background(colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
-
-
             ) {
-                Text("Buscar cita", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Buscar cita",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                outLinedText(textoBusqueda3, "Buscar por hora o nombre del doctor", Modifier.fillMaxWidth(), false, true)
+                outLinedText(
+                    textoBusqueda3,
+                    "Buscar por hora o nombre del doctor",
+                    Modifier.fillMaxWidth(),
+                    false,
+                    true
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Button(onClick = {
-                    val db = baseDatos
-                    val query = """
-                    SELECT * FROM citas
-                    WHERE hora_cita LIKE ? OR nombre_doc LIKE ?
-                """.trimIndent()
+                Button(
+                    onClick = {
+                        val db = baseDatos
+                        val query = """
+                        SELECT * FROM citas
+                        WHERE hora_cita LIKE ? OR nombre_doc LIKE ?
+                    """.trimIndent()
 
-                    val cursor = db.rawQuery(query, arrayOf("%${textoBusqueda3.value}%", "%${textoBusqueda3.value}%"))
+                        val cursor = db.rawQuery(
+                            query,
+                            arrayOf("%${textoBusqueda3.value}%", "%${textoBusqueda3.value}%")
+                        )
 
-                    val resultados2 = mutableListOf<Map<String, String>>()
+                        val resultados2 = mutableListOf<Map<String, String>>()
 
-                    if (cursor.moveToFirst()) {
-                        do {
-                            val cita = mutableMapOf<String, String>()
-                            for (i in 0 until cursor.columnCount) {
-                                cita[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
-                            }
-                            resultados2.add(cita)
-                        } while (cursor.moveToNext())
-                    }
-                    cursor.close()
-                    resultadosBusqueda3.value = resultados2
-
-                },
+                        if (cursor.moveToFirst()) {
+                            do {
+                                val cita = mutableMapOf<String, String>()
+                                for (i in 0 until cursor.columnCount) {
+                                    cita[cursor.getColumnName(i)] = cursor.getString(i) ?: ""
+                                }
+                                resultados2.add(cita)
+                            } while (cursor.moveToNext())
+                        }
+                        cursor.close()
+                        resultadosBusqueda3.value = resultados2
+                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xff00a9b0) // Aquí el color hexadecimal
-                    )) {
-                    Text("Buscar")
+                        containerColor = colors.primary
+                    )
+                ) {
+                    Text("Buscar", color = colors.onPrimary)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (resultadosBusqueda3.value.isNotEmpty()) {
-                    Column(modifier = Modifier.heightIn(max = 300.dp).verticalScroll(scrollState2)) {
+                    Column(
+                        modifier = Modifier
+                            .heightIn(max = 300.dp)
+                            .verticalScroll(scrollState2)
+                    ) {
                         resultadosBusqueda3.value.forEach { cita ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        // Rellenar campos
-                                        id.value = cita["id_cita"] ?:""
-                                        hora.value = cita["hora_cita"] ?:""
-                                        fecha.value = cita["fecha_cita"] ?:""
-                                        estadoSelec.value = cita["estado_cita"] ?:""
+                                        id.value = cita["id_cita"] ?: ""
+                                        hora.value = cita["hora_cita"] ?: ""
+                                        fecha.value = cita["fecha_cita"] ?: ""
+                                        estadoSelec.value = cita["estado_cita"] ?: ""
 
-                                        //doctor
                                         idDoctor.value = cita["id_doctor"] ?: ""
                                         nombreDoctor.value = cita["nombre_doc"] ?: ""
                                         apellidoDoctor.value = cita["apellido_doc"] ?: ""
 
-                                        //paciente
                                         idPaciente.value = cita["id_paciente"] ?: ""
                                         nombrePaciente.value = cita["nombre_paciente"] ?: ""
                                         apellidoPaciente.value = cita["apellido_paciente"] ?: ""
 
                                         showBuscarPopup3.value = false
-
                                     }
-                                    .background(Color(0xFFE0F7FA))
+                                    .background(colors.surfaceVariant)
                                     .padding(8.dp)
                             ) {
                                 Text(
-                                    text = """ 
-                                        Id: ${cita["id_cita"]}
-                                        Hora: ${cita["hora_cita"]}
-                                        Paciente ${cita["nombre_paciente"]} ${cita["apellido_paciente"]} 
-                                        Doctor: ${cita["nombre_doc"]}
-                                    """.trimIndent(),
-                                    modifier = Modifier.weight(1f)
-
+                                    text = """
+                                    Id: ${cita["id_cita"]}
+                                    Hora: ${cita["hora_cita"]}
+                                    Paciente: ${cita["nombre_paciente"]} ${cita["apellido_paciente"]}
+                                    Doctor: ${cita["nombre_doc"]}
+                                """.trimIndent(),
+                                    modifier = Modifier.weight(1f),
+                                    color = colors.onSurfaceVariant
                                 )
                             }
                         }
                     }
                 } else {
-                    Text("Sin resultados", color = Color.Gray)
+                    Text("Sin resultados", color = colors.onBackground.copy(alpha = 0.5f))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = { showBuscarPopup3.value = false }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red // Aquí el color hexadecimal
-                )) {
-                    Text("Cerrar")
+                Button(
+                    onClick = { showBuscarPopup3.value = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.error
+                    )
+                ) {
+                    Text("Cerrar", color = colors.onError)
                 }
             }
         }
     }
+
 
 
 }
