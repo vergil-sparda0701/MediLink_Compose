@@ -1,6 +1,6 @@
 # MediLink
 
-**MediLink** es una aplicación móvil desarrollada en Kotlin utilizando Jetpack Compose. Está diseñada para gestionar citas médicas, permitiendo a los usuarios programar, visualizar y recibir recordatorios de sus citas. La aplicación también ofrece funcionalidades de notificaciones y envío de correos electrónicos para mejorar la comunicación entre pacientes y profesionales de la salud.
+**MediLink** es una aplicación móvil desarrollada en Kotlin utilizando Jetpack Compose. Está diseñada para gestionar citas médicas, permitiendo a los usuarios programar, visualizar y recibir recordatorios de sus citas. La aplicación también ofrece funcionalidades de notificaciones y envío de mensajes SMS para mejorar la comunicación entre pacientes y profesionales de la salud.
 
 ## Características
 
