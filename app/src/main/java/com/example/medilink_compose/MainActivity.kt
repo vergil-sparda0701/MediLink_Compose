@@ -24,8 +24,6 @@ import com.example.medilink_compose.Notificacion.NotificacionWorker
 import com.example.medilink_compose.Notificacion.mostrarNotificacion
 import com.example.medilink_compose.Notificacion.pacienteCita
 import com.example.medilink_compose.Notificacion.smsWorker
-import com.example.medilink_compose.Pantallas.MyAppTheme
-import com.example.medilink_compose.Pantallas.ThemeSwitcher
 
 
 val databaseVersion : Int = 4
