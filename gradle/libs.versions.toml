@@ -2,6 +2,7 @@
 accompanistPermissions = "0.31.1-alpha"
 agp = "8.8.0"
 androidActivation = "1.6.7"
+composeCharts = "1.0.0-beta01"
 coreKtxVersion = "1.16.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
@@ -26,6 +27,8 @@ android-activation = { module = "com.sun.mail:android-activation", version.ref =
 android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidActivation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v1160 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+compose-charts = { module = "com.github.SmartToolFactory:Compose-Charts", version.ref = "composeCharts" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

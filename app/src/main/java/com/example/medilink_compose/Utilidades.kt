@@ -2,7 +2,6 @@ package com.example.medilink_compose
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -45,11 +44,154 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lint.kotlin.metadata.Visibility
 import java.util.Calendar
 
+import android.graphics.Paint
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.style.TextAlign
+import com.example.medilink_compose.BD_Files.ThemeModel
+import com.example.medilink_compose.BD_Files.ThemeViewModel
+
 @Composable
-public fun outLinedText(
+fun BarChartStyled(
+    modifier: Modifier = Modifier,
+    title: String = "Gráfico de Barras",
+    data: List<Float>,
+    labels: List<String>,
+    barColor: List<Color> = listOf(Color(0xFFFFA726), Color(0xFFEF6C00)),
+    textColor: Color = Color.Black,
+    steps: Int = 5 // Cantidad de divisiones del eje Y
+) {
+    val maxValue = data.maxOrNull() ?: 0f
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            val barWidthPx = constraints.maxWidth / (data.size * 2)
+            val spacePx = barWidthPx
+
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val canvasHeight = size.height
+                val canvasWidth = size.width
+
+                val bottomOffset = 30f
+                val leftOffset = 60f
+
+                // Ejes
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(leftOffset, 0f),
+                    end = Offset(leftOffset, canvasHeight - bottomOffset),
+                    strokeWidth = 4f
+                )
+                drawLine(
+                    color = Color.Gray,
+                    start = Offset(leftOffset, canvasHeight - bottomOffset),
+                    end = Offset(canvasWidth, canvasHeight - bottomOffset),
+                    strokeWidth = 4f
+                )
+
+                // Líneas guía horizontales + valores Y
+                val stepValue = maxValue / steps
+                for (i in 0..steps) {
+                    val y = (canvasHeight - bottomOffset) - (i * (canvasHeight - bottomOffset) / steps)
+                    val label = (i * stepValue).toInt().toString()
+
+                    // Línea guía
+                    drawLine(
+                        color = Color.LightGray,
+                        start = Offset(leftOffset, y),
+                        end = Offset(canvasWidth, y),
+                        strokeWidth = 1f
+                    )
+
+                    // Texto del valor Y
+                    drawContext.canvas.nativeCanvas.drawText(
+                        label,
+                        0f,
+                        y + 10f,
+                        android.graphics.Paint().apply {
+                            color = textColor.toArgb()
+                            textSize = 24f
+                            textAlign = android.graphics.Paint.Align.LEFT
+                        }
+                    )
+                }
+
+                // Dibujar barras
+                data.forEachIndexed { index, value ->
+                    val barHeight = (value / maxValue) * (canvasHeight - bottomOffset - 30f)
+                    val x = leftOffset + index * (barWidthPx + spacePx)
+                    val y = (canvasHeight - bottomOffset) - barHeight
+
+                    // Barra con gradiente
+                    drawRect(
+                        brush = Brush.verticalGradient(barColor),
+                        topLeft = Offset(x, y),
+                        size = Size(barWidthPx.toFloat(), barHeight)
+                    )
+
+                    // Valor encima
+                    drawContext.canvas.nativeCanvas.drawText(
+                        value.toInt().toString(),
+                        x + barWidthPx / 2,
+                        y - 10f,
+                        android.graphics.Paint().apply {
+                            color = textColor.toArgb()
+                            textSize = 26f
+                            textAlign = android.graphics.Paint.Align.CENTER
+                        }
+                    )
+
+                    // Etiqueta debajo
+                    drawContext.canvas.nativeCanvas.drawText(
+                        labels.getOrNull(index) ?: "",
+                        x + barWidthPx / 2,
+                        canvasHeight - 5f,
+                        android.graphics.Paint().apply {
+                            color = textColor.toArgb()
+                            textSize = 26f
+                            textAlign = android.graphics.Paint.Align.CENTER
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun outLinedText(
     variableMutable: MutableState<String>,
     etiqueta: String,
     modifier: Modifier,

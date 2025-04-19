@@ -9,10 +9,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
@@ -20,6 +28,7 @@ import com.example.medilink_compose.Notificacion.createNotificationChannel
 import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 import java.util.concurrent.TimeUnit
 import androidx.work.*
+import com.example.medilink_compose.BD_Files.ThemeModel
 import com.example.medilink_compose.Notificacion.NotificacionWorker
 import com.example.medilink_compose.Notificacion.mostrarNotificacion
 import com.example.medilink_compose.Notificacion.pacienteCita
@@ -55,80 +64,81 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(Modifier.padding(innerPadding))
 
+
+
                 }
-
             }
-        }
 
 
-        // PEDIR PERMISO PARA ENVIAR SMS
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.SEND_SMS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("MainActivity", "Solicitando permiso SEND_SMS")
-            requestPermissionLauncher.launch(android.Manifest.permission.SEND_SMS)
-        } else {
-            Log.d("MainActivity", "Permiso SEND_SMS ya concedido")
-        }
-
-
-        // PEDIR PERMISO PARA NOTIFICACIONES
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // PEDIR PERMISO PARA ENVIAR SMS
             if (ContextCompat.checkSelfPermission(
                     this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
-
+                    android.Manifest.permission.SEND_SMS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Log.d("MainActivity", "Solicitando permiso POST_NOTIFICATIONS")
-                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                Log.d("MainActivity", "Solicitando permiso SEND_SMS")
+                requestPermissionLauncher.launch(android.Manifest.permission.SEND_SMS)
             } else {
-                Log.d("MainActivity", "Permiso POST_NOTIFICATIONS ya concedido")
+                Log.d("MainActivity", "Permiso SEND_SMS ya concedido")
             }
-        }
 
-        // CREAR CANAL DE NOTIFICACIONES
-        createNotificationChannel(this)
-        programarNotificacionesPeriodicas(this)
-        programarSMSPeriodicos(this)
+
+            // PEDIR PERMISO PARA NOTIFICACIONES
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        android.Manifest.permission.POST_NOTIFICATIONS
+
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Log.d("MainActivity", "Solicitando permiso POST_NOTIFICATIONS")
+                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    Log.d("MainActivity", "Permiso POST_NOTIFICATIONS ya concedido")
+                }
+            }
+
+            // CREAR CANAL DE NOTIFICACIONES
+            createNotificationChannel(this)
+            programarNotificacionesPeriodicas(this)
+            programarSMSPeriodicos(this)
+
+        }
 
     }
 
-}
+    fun programarNotificacionesPeriodicas(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .build()
 
-fun programarNotificacionesPeriodicas(context: Context) {
-    val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-        .build()
+        Log.d("WorkerTimer", "intervalo de tiempo en el worker")
+        val request = PeriodicWorkRequestBuilder<NotificacionWorker>(5, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
 
-    Log.d("WorkerTimer", "intervalo de tiempo en el worker")
-    val request = PeriodicWorkRequestBuilder<NotificacionWorker>(5, TimeUnit.MINUTES)
-        .setConstraints(constraints)
-        .build()
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "notificacionesCitas",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
 
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "notificacionesCitas",
-        ExistingPeriodicWorkPolicy.KEEP,
-        request
-    )
-}
+    fun programarSMSPeriodicos(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+            .build()
 
-fun programarSMSPeriodicos(context: Context) {
-    val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-        .build()
+        val request = PeriodicWorkRequestBuilder<smsWorker>(5, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
 
-    val request = PeriodicWorkRequestBuilder<smsWorker>(5, TimeUnit.MINUTES)
-        .setConstraints(constraints)
-        .build()
-
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "smsCitas",
-        ExistingPeriodicWorkPolicy.KEEP,
-        request
-    )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "smsCitas",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
 }
 
 

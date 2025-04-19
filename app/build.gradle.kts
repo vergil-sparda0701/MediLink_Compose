@@ -85,6 +85,8 @@ dependencies {
     implementation (libs.android.mail) // Or the latest version
     implementation (libs.android.activation) // And this one too
 
+    //implementation("com.github.tehras:charts:0.2.4")
 
+    implementation(libs.androidx.material.icons.extended) //libreria para iconos
 
 }

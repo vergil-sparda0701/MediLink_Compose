@@ -7,7 +7,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -35,7 +37,9 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
     val navItems = listOf(
         NavItem("Inicio", Icons.Default.Home, "Menu"),
         NavItem("Historial", Icons.Default.Refresh, "historiales"),
-        NavItem("Config", Icons.Default.Settings, "")
+        NavItem("Stats", Icons.Filled.BarChart, "stats"),
+        NavItem("Config", Icons.Default.Settings, "config")
+
     )
 
 
