@@ -114,7 +114,7 @@ fun HistorialActivitys(
             Row (Modifier.statusBarsPadding(),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically){
-                IconButton(onClick = {navController.popBackStack()}) {
+                IconButton(onClick = {navController.navigate("Menu")}) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Navegar hacia atras"

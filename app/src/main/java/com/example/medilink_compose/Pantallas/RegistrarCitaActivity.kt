@@ -136,6 +136,7 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     modifier =  Modifier.fillMaxWidth()
                 ) {
 
+                    //boton agregar
                     ImageButton(imageResId = R.drawable.agregar, text = "Nuevo", onClick = {
 
                         id.value = ""
@@ -151,6 +152,8 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
                     })
                     Spacer(modifier = Modifier.width(2.dp))
+
+                    //boton modificar
                     ImageButton(imageResId = R.drawable.modificar, text = "Modificar", onClick = {
 
                         try {
@@ -225,8 +228,12 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                     })
 
                     Spacer(modifier = Modifier.width(2.dp))
+
+                    //boton buscar
                     ImageButton(imageResId = R.drawable.buscar, text = "Buscar", onClick = {showBuscarPopup3.value = true})
                     Spacer(modifier = Modifier.width(2.dp))
+
+                    //boton guardar
                     ImageButton(imageResId = R.drawable.guardar, text = "Guardar", onClick = {
                         try{
 
@@ -284,6 +291,8 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
 
                     })
                     Spacer(modifier = Modifier.width(2.dp))
+
+                    //boton eliminar
                     ImageButton(imageResId = R.drawable.eliminar, text = "Eliminar", onClick = {
 
                         try{
@@ -752,7 +761,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
             }
         }
     }
-
-
+    
 
 }

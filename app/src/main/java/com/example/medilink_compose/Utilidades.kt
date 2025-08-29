@@ -73,10 +73,16 @@ fun BarChartStyled(
     data: List<Float>,
     labels: List<String>,
     barColor: List<Color> = listOf(Color(0xFFFFA726), Color(0xFFEF6C00)),
-    textColor: Color = Color.Black,
-    steps: Int = 5 // Cantidad de divisiones del eje Y
+    textColor: Color = Color.Black
 ) {
     val maxValue = data.maxOrNull() ?: 0f
+
+    // Calcular el número de pasos del eje Y de forma dinámica
+    // Si el valor máximo es menor a 5, los pasos serán 1 en 1
+    // Si es mayor, se ajusta para que los pasos sean más limpios
+    val maxInt = (maxValue + 0.99f).toInt() // Redondea al siguiente entero
+    val steps = if (maxInt < 5) maxInt else 5
+    val stepValue = if (steps > 0) maxInt.toFloat() / steps else 0f
 
     Column(
         modifier = modifier,
@@ -120,7 +126,6 @@ fun BarChartStyled(
                 )
 
                 // Líneas guía horizontales + valores Y
-                val stepValue = maxValue / steps
                 for (i in 0..steps) {
                     val y = (canvasHeight - bottomOffset) - (i * (canvasHeight - bottomOffset) / steps)
                     val label = (i * stepValue).toInt().toString()
@@ -148,7 +153,7 @@ fun BarChartStyled(
 
                 // Dibujar barras
                 data.forEachIndexed { index, value ->
-                    val barHeight = (value / maxValue) * (canvasHeight - bottomOffset - 30f)
+                    val barHeight = (value / maxInt) * (canvasHeight - bottomOffset - 30f)
                     val x = leftOffset + index * (barWidthPx + spacePx)
                     val y = (canvasHeight - bottomOffset) - barHeight
 

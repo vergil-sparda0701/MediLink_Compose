@@ -9,18 +9,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.work.WorkManager
@@ -28,15 +20,11 @@ import com.example.medilink_compose.Notificacion.createNotificationChannel
 import com.example.medilink_compose.ui.theme.MediLink_ComposeTheme
 import java.util.concurrent.TimeUnit
 import androidx.work.*
-import com.example.medilink_compose.BD_Files.ThemeModel
 import com.example.medilink_compose.Notificacion.NotificacionWorker
-import com.example.medilink_compose.Notificacion.mostrarNotificacion
-import com.example.medilink_compose.Notificacion.pacienteCita
+import com.example.medilink_compose.Notificacion.correoWorker
 import com.example.medilink_compose.Notificacion.smsWorker
 
-
 val databaseVersion : Int = 4
-
 
 class MainActivity : ComponentActivity() {
 
@@ -46,15 +34,12 @@ class MainActivity : ComponentActivity() {
         ) { isGranted: Boolean ->
             if (isGranted) {
                 // Permiso concedido, puedes mostrar notificaciones
-                Log.d("MainActivity", "Permiso de notificación concedido")
-                // Aquí podrías llamar a tu lógica para programar o mostrar notificaciones iniciales
+                Log.d("MediLink", "Permiso de notificación concedido")
             } else {
                 // Permiso denegado, informa al usuario que las notificaciones no funcionarán
-                Log.w("MainActivity", "Permiso de notificación denegado")
-                // Puedes mostrar un mensaje al usuario explicando por qué necesita el permiso
+                Log.w("MediLink", "Permiso de notificación denegado")
             }
         }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +48,8 @@ class MainActivity : ComponentActivity() {
             MediLink_ComposeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(Modifier.padding(innerPadding))
-
-
-
                 }
             }
-
 
             // PEDIR PERMISO PARA ENVIAR SMS
             if (ContextCompat.checkSelfPermission(
@@ -82,7 +63,6 @@ class MainActivity : ComponentActivity() {
                 Log.d("MainActivity", "Permiso SEND_SMS ya concedido")
             }
 
-
             // PEDIR PERMISO PARA NOTIFICACIONES
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(
@@ -91,10 +71,10 @@ class MainActivity : ComponentActivity() {
 
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    Log.d("MainActivity", "Solicitando permiso POST_NOTIFICATIONS")
+                    Log.d("MediLink", "Solicitando permiso POST_NOTIFICATIONS")
                     requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 } else {
-                    Log.d("MainActivity", "Permiso POST_NOTIFICATIONS ya concedido")
+                    Log.d("MediLink", "Permiso POST_NOTIFICATIONS ya concedido")
                 }
             }
 
@@ -102,9 +82,8 @@ class MainActivity : ComponentActivity() {
             createNotificationChannel(this)
             programarNotificacionesPeriodicas(this)
             programarSMSPeriodicos(this)
-
+            programarCorreosPeriodicos(this)
         }
-
     }
 
     fun programarNotificacionesPeriodicas(context: Context) {
@@ -139,10 +118,20 @@ class MainActivity : ComponentActivity() {
             request
         )
     }
+
+    fun programarCorreosPeriodicos(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val request = PeriodicWorkRequestBuilder<correoWorker>(5, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "correoCitas",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+    }
 }
-
-
-
-
-
-

@@ -10,9 +10,6 @@ import android.content.Intent
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
 import com.example.medilink_compose.BD_Files.SQLiteHelper
 import com.example.medilink_compose.MainActivity
 import com.example.medilink_compose.R
@@ -22,7 +19,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 import android.util.Log
 
 const val CHANNEL_ID = "mi_canal_notificaciones"
@@ -63,7 +59,6 @@ fun mostrarNotificacion(context: Context, titulo: String, mensaje: String) {
         notify(1, builder.build()) // ID único para cada notificación
     }
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun pacienteCita(context: Context) {

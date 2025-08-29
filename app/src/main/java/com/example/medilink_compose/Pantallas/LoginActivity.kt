@@ -70,7 +70,7 @@ fun LoginActivity(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
 
-        Text("MediLink", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color(0xff00a9b0))
+        Text("MediCita", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color(0xff00a9b0))
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -149,7 +149,7 @@ fun LoginActivity(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        Text("© 2025 MediLink", fontSize = 12.sp, color = Color.LightGray)
+        Text("© 2025 MediCita", fontSize = 12.sp, color = Color.LightGray)
     }
 
 }
@@ -195,6 +195,7 @@ fun login(
 
     if (valorEncontrado) {
         usuarioViewModel.setUsuario(usuario)
+        Toast.makeText(context, "Bienvenido al sistema", Toast.LENGTH_LONG).show()
         navController.navigate("Menu")
     } else {
         Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_LONG).show()
