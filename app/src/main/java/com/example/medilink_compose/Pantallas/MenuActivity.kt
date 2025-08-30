@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -39,11 +40,32 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
         NavItem("Historial", Icons.Default.Refresh, "historiales"),
         NavItem("Stats", Icons.Filled.BarChart, "stats"),
         NavItem("Config", Icons.Default.Settings, "config")
-
     )
 
+    // Lista de botones del menú con texto y ruta
+    val menuButtons = listOf(
+        MenuButton("Registrar paciente", "paciente"),
+        MenuButton("Registrar doctor", "doctor"),
+        MenuButton("Registrar cita", "cita"),
+        MenuButton("Citas pendientes", "citaPendiente"),
+        MenuButton("Panel de notificaciones", "notificaciones")
+    )
 
     Scaffold(
+        topBar = {
+            Row(
+                Modifier.statusBarsPadding(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navController.navigate("notificaciones") }) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Navegar hacia atrás"
+                    )
+                }
+            }
+        },
 
         bottomBar = {
             BottomAppBar(
@@ -110,38 +132,15 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Button(
-                        onClick = { navController.navigate("paciente") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
-                    ) {
-                        Text("Registrar paciente")
+                    menuButtons.forEach { button ->
+                        Button(
+                            onClick = { navController.navigate(button.route) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
+                        ) {
+                            Text(button.text)
+                        }
                     }
-
-                    Button(
-                        onClick = { navController.navigate("doctor") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
-                    ) {
-                        Text("Registrar doctor")
-                    }
-
-                    Button(
-                        onClick = { navController.navigate("cita")},
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
-                    ) {
-                        Text("Registrar cita")
-                    }
-
-                    Button(
-                        onClick = { navController.navigate("citaPendiente") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff00a9b0))
-                    ) {
-                        Text("Citas pendientes")
-                    }
-                    
                 }
             }
         }
@@ -149,3 +148,4 @@ fun MenuActivity(modifier: Modifier, navController: NavHostController, usuarioVi
 }
 
 data class NavItem(val label: String, val icon: ImageVector, val route: String)
+data class MenuButton(val text: String, val route: String)

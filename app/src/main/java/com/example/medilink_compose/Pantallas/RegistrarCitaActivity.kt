@@ -376,6 +376,13 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
             Spacer(modifier = Modifier.height(16.dp))
 
             SeccionDesplegable("Datos del paciente", expandido2) {
+
+                outLinedText(idPaciente, "Codigo paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
+                outLinedText(nombrePaciente, "Nombre paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
+                outLinedText(apellidoPaciente, "Apellido paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {showBuscarPopup.value = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -384,17 +391,18 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                 ) {
                     Text("Agregar paciente", fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(idPaciente, "Codigo paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(nombrePaciente, "Nombre paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(apellidoPaciente, "Apellido paciente", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             SeccionDesplegable("Datos del doctor", expandido3) {
+
+                outLinedText(idDoctor, "Codigo doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
+                outLinedText(nombreDoctor, "Nombre doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
+                outLinedText(apellidoDoctor, "Apellido doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {showBuscarPopup2.value = true},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -403,12 +411,6 @@ fun RegistrarCitaActivity(modifier: Modifier = Modifier, navController: NavHostC
                 ) {
                     Text("Agregar doctor", fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(idDoctor, "Codigo doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(nombreDoctor, "Nombre doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
-                Spacer(modifier = Modifier.height(8.dp))
-                outLinedText(apellidoDoctor, "Apellido doctor", Modifier.fillMaxWidth(), false, keyDown = true, editable = false, activo = true)
             }
 
 

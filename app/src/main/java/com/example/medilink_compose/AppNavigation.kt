@@ -15,6 +15,7 @@ import com.example.medilink_compose.Pantallas.ConfigActivity
 import com.example.medilink_compose.Pantallas.HistorialActivitys
 import com.example.medilink_compose.Pantallas.LoginActivity
 import com.example.medilink_compose.Pantallas.MenuActivity
+import com.example.medilink_compose.Pantallas.NotificacionActivity
 import com.example.medilink_compose.Pantallas.RegistrarCitaActivity
 import com.example.medilink_compose.Pantallas.RegistrarDoctorActivity
 import com.example.medilink_compose.Pantallas.RegistrarPacienteActivity
@@ -63,6 +64,9 @@ fun AppNavigation (modifier: Modifier = Modifier){
 
         composable("stats"){
             StatsActivity(modifier, navController)
+        }
+        composable("notificaciones"){
+            NotificacionActivity(modifier, navController)
         }
 
         composable("config"){

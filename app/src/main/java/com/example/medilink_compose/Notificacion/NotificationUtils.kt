@@ -89,7 +89,7 @@ fun pacienteCita(context: Context) {
 
             val diferencia = Duration.between(ahora, citaDateTime).toMinutes()
 
-            if (diferencia in 25..35) {
+            if (diferencia in 30..35) {
 
                 val mensaje = "Cita con el paciente: $nombrePaciente $apellidoPaciente hoy a las $horaStr."
 

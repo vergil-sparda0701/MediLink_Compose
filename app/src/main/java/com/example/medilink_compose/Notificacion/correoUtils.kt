@@ -5,8 +5,10 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.medilink_compose.BD_Files.SQLiteHelper
-import com.example.medilink_compose.R
 import com.example.medilink_compose.databaseVersion
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,93 +22,96 @@ import javax.mail.Transport
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
+private const val TAG = "CorreoUtils"
+private const val SMTP_HOST = "smtp-mail.outlook.com"
+private const val SMTP_PORT = "587"
+private const val SMTP_USERNAME = "mediLinkApp2025@outlook.com"
+private const val SMTP_PASSWORD = "bsqbcylsbbsfnikb"
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun pacienteCorreo(context: Context) {
+fun enviarRecordatoriosCorreo(context: Context) {
     val dbHelper = SQLiteHelper(context, "MediLink.db", null, databaseVersion)
-    val db = dbHelper.readableDatabase
     val ahora = LocalDateTime.now()
 
-    val cursor = db.rawQuery(
-        """
-    SELECT
-        citas.fecha_cita,
-        citas.hora_cita,
-        pacientes.correo,
-        citas.nombre_paciente,
-        citas.apellido_paciente
-    FROM citas
-    INNER JOIN pacientes ON citas.id_paciente = pacientes.id
-    WHERE estado_cita = 'Pendiente'
-    """, null
-    )
+    dbHelper.readableDatabase.use { db ->
+        val query = """
+            SELECT
+                citas.fecha_cita,
+                citas.hora_cita,
+                pacientes.correo,
+                citas.nombre_paciente,
+                citas.apellido_paciente
+            FROM citas
+            INNER JOIN pacientes ON citas.id_paciente = pacientes.id
+            WHERE estado_cita = 'Pendiente'
+        """.trimIndent()
 
-
-    while (cursor.moveToNext()) {
-        try {
-            val fechaStr = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita"))
-            val horaStr = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita"))
-            val correoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
-            val nombrePaciente = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
-            val apellidoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
-
+        db.rawQuery(query, null).use { cursor ->
             val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            val fecha = LocalDate.parse(fechaStr, dateFormatter)
-            val hora = LocalTime.parse(horaStr, timeFormatter)
-            val citaDateTime = LocalDateTime.of(fecha, hora)
 
-            val diferencia = Duration.between(ahora, citaDateTime).toMinutes()
+            while (cursor.moveToNext()) {
+                try {
+                    val fechaStr = cursor.getString(cursor.getColumnIndexOrThrow("fecha_cita"))
+                    val horaStr = cursor.getString(cursor.getColumnIndexOrThrow("hora_cita"))
+                    val correoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("correo"))
+                    val nombrePaciente = cursor.getString(cursor.getColumnIndexOrThrow("nombre_paciente"))
+                    val apellidoPaciente = cursor.getString(cursor.getColumnIndexOrThrow("apellido_paciente"))
 
-            if (diferencia in 25..35) {
+                    val fecha = LocalDate.parse(fechaStr, dateFormatter)
+                    val hora = LocalTime.parse(horaStr, timeFormatter)
+                    val citaDateTime = LocalDateTime.of(fecha, hora)
 
-                val icon = R.drawable.icono
+                    val diferenciaMinutos = Duration.between(ahora, citaDateTime).toMinutes()
 
-                val mensaje = "$icon \n MediLink \nHola $nombrePaciente $apellidoPaciente, este es un recordatorio de tu cita médica hoy a las $horaStr. ¡No faltes!"
+                    if (diferenciaMinutos in 30..35) {
+                        val asunto = "Recordatorio de cita"
+                        val cuerpo = """
+                            Hola $nombrePaciente $apellidoPaciente,
+                            
+                            Este es un recordatorio de tu cita médica hoy a las $horaStr.
+                            ¡No faltes!
+                            
+                            MediLink
+                        """.trimIndent()
 
-                Log.d("SMSCita", "Enviando SMS a: $correoPaciente")
-
-                sendEmail("Recordatorio de cita", mensaje, correoPaciente)
+                        Log.d(TAG, "Enviando correo a: $correoPaciente")
+                        enviarCorreo(asunto, cuerpo, correoPaciente)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error al procesar cita: ${e.message}", e)
+                }
             }
-        } catch (e: Exception) {
-            Log.e("SMSCita", "Error al procesar cita: ${e.message}")
         }
     }
-
-    cursor.close()
-    db.close()
 }
 
-fun sendEmail(asunto : String, cuerpo : String, destinatario : String) {
-    val username = "mediLinkApp2025@outlook.com"
-    val password = "bsqbcylsbbsfnikb" // ojo: Gmail ya no permite contraseña normal, debes generar un "App Password"
-
+fun enviarCorreo(asunto: String, cuerpo: String, destinatario: String) {
     val props = Properties().apply {
         put("mail.smtp.auth", "true")
         put("mail.smtp.starttls.enable", "true")
-        put("mail.smtp.host", "smtp-mail.outlook.com")
-        put("mail.smtp.port", "587")
+        put("mail.smtp.host", SMTP_HOST)
+        put("mail.smtp.port", SMTP_PORT)
     }
 
-    val session = Session.getInstance(props,
-        object : javax.mail.Authenticator() {
-            override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(username, password)
+    val session = Session.getInstance(props, object : javax.mail.Authenticator() {
+        override fun getPasswordAuthentication() =
+            PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD)
+    })
+
+    // Usamos corutinas para no bloquear el hilo principal
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val message = MimeMessage(session).apply {
+                setFrom(InternetAddress(SMTP_USERNAME))
+                setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario))
+                subject = asunto
+                setText(cuerpo)
             }
-        })
-
-    try {
-        val message = MimeMessage(session).apply {
-            setFrom(InternetAddress(username))
-            setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario))
-            subject = asunto
-            setText(cuerpo)
+            Transport.send(message)
+            Log.d(TAG, "Correo enviado a $destinatario")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error enviando correo: ${e.message}", e)
         }
-
-        // Importante: usar un hilo, no el main thread
-        Transport.send(message)
-
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
 }

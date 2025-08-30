@@ -57,7 +57,7 @@ fun CitasPendientesActivity(
         val query = """
         SELECT * FROM citas
         WHERE estado_cita = ?
-        ORDER BY fecha_cita ASC, hora_cita ASC
+        ORDER BY id_cita ASC
         """.trimIndent()
 
         val cursor = baseDatos.rawQuery(query, arrayOf("Pendiente"))
